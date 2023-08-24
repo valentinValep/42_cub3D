@@ -10,16 +10,13 @@ BINARIES_DIR := build/
 INCLUDES_DIR := includes/
 LIBRARIES_DIR := lib/
 
-INCLUDES := -I$(INCLUDES_DIR)
+INCLUDES := -I$(INCLUDES_DIR) -I$(LIBRARIES_DIR)minilibx -I$(LIBRARIES_DIR)libft
 
-LIBRARIES := -L$(LIBRARIES_DIR)minilibx-linux -lmlx -L/usr/lib -lXext -lX11 -lm -lz -L$(LIBRARIES_DIR)libft -lft
+LIBRARIES := -L$(LIBRARIES_DIR)minilibx -lmlx -L/usr/lib -lXext -lX11 -lm -lz -L$(LIBRARIES_DIR)libft -lft
 
 OBJ := main.o \
 	error.o \
-	philo.o \
-	time.o \
-	status.o \
-	fork.o \
+	map.o \
 
 OBJ := $(addprefix $(BINARIES_DIR),$(OBJ))
 
@@ -28,10 +25,13 @@ DEPS := ${OBJ:.o=.d}
 RM := rm -f
 
 $(NAME) : $(OBJ)
+	make -C $(LIBRARIES_DIR)libft
+	make -C $(LIBRARIES_DIR)minilibx
 	$(CC) $(OBJ) $(LIBRARIES) -o $(NAME)
 
 $(BINARIES_DIR) :
 	mkdir $(BINARIES_DIR)
+
 $(BINARIES_DIR)%.o : $(SOURCES_DIR)%.c | $(BINARIES_DIR)
 	$(CC) $(FLAGS) $(INCLUDES) -c $< -o $@
 
