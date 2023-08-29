@@ -1,7 +1,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
-#include "cub3D.h"
+#include "cub3d.h"
 #include "libft.h"
 
 int	verif_and_init_line(t_map *map, char *line)
@@ -92,4 +92,9 @@ int	init_map(t_map *map, char *path)
 	printf("width: %d\n", map->width);
 	printf("height: %d\n", map->height);
 	return (0);
+}
+
+char	get_map_char(t_map *map, int x, int y)
+{
+	return (((char *)((t_vector *)map->grid.tab)[y].tab)[x]);
 }

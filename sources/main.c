@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "cub3D.h"
+#include "cub3d.h"
 
 int	init_context(t_context *context, char **argv)
 {
@@ -22,11 +22,6 @@ int	init_context(t_context *context, char **argv)
 void	destroy_context(t_context *context)
 {
 	(void)context;
-}
-
-void	render(t_context *context)
-{
-	((int *) context->img.pixels)[0] = 0x00FFFFFF;
 }
 
 void	update(t_context *context)

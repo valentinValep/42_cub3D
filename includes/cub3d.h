@@ -20,7 +20,7 @@ typedef struct s_map {
 	int			width;
 	int			height;
 	int			has_player;
-	t_vector	grid;
+	t_vector	grid; // vector<vector<char>>
 }	t_map;
 
 typedef struct s_context {
@@ -30,7 +30,18 @@ typedef struct s_context {
 	t_map	map;
 }	t_context;
 
-int	basic_error(char *str, int ret);
-int	init_map(t_map *map, char *path);
+// errors.c
+int		basic_error(char *str, int ret);
+
+// images.c
+void	set_img_pixel(t_img *img, int x, int y, int color);
+int		get_img_pixel(t_img *img, int x, int y);
+
+// map.cs
+int		init_map(t_map *map, char *path);
+char	get_map_char(t_map *map, int x, int y);
+
+// rendering.c
+void	render(t_context *context);
 
 #endif
