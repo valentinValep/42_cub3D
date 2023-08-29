@@ -16,11 +16,18 @@ typedef struct s_img {
 	int		endian;
 }	t_img;
 
+typedef struct s_player {
+	float	x;
+	float	y;
+	float	angle;
+}	t_player;
+
 typedef struct s_map {
+	t_player	player;
+	t_vector	grid; // vector<vector<char>>
 	int			width;
 	int			height;
 	int			has_player;
-	t_vector	grid; // vector<vector<char>>
 }	t_map;
 
 typedef struct s_context {
@@ -40,6 +47,7 @@ int		get_img_pixel(t_img *img, int x, int y);
 // map.cs
 int		init_map(t_map *map, char *path);
 char	get_map_char(t_map *map, int x, int y);
+void	set_map_char(t_map *map, int x, int y, char c);
 
 // rendering.c
 void	render(t_context *context);

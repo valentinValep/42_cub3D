@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <math.h>
 #include "cub3d.h"
 #include "libft.h"
 
@@ -68,6 +69,33 @@ int	parse_line(t_map *map, char *line)
 	return (0);
 }
 
+void	init_player(t_map *map)
+{
+	int		x;
+	int		y;
+	char	c;
+
+	y = 0;
+	while (y < map->height)
+	{
+		x = 0;
+		while (x < map->width)
+		{
+			c = get_map_char(map, x, y);
+			if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
+			{
+				map->player.x = x + 0.5;
+				map->player.y = y + 0.5;
+				map->player.angle = c == 'N' ? 0 : c == 'E' ? M_PI_2 : c == 'S' ? M_PI : 3 * M_PI_2;
+				set_map_char(map, x, y, '0');
+				return ;
+			}
+			x++;
+		}
+		y++;
+	}
+}
+
 int	init_map(t_map *map, char *path)
 {
 	int		fd;
@@ -89,12 +117,16 @@ int	init_map(t_map *map, char *path)
 		return (basic_error("Empty map\n", 1));
 	if (!map->has_player)
 		return (basic_error("No player\n", 1));
-	printf("width: %d\n", map->width);
-	printf("height: %d\n", map->height);
+	init_player(map);
 	return (0);
 }
 
 char	get_map_char(t_map *map, int x, int y)
 {
 	return (((char *)((t_vector *)map->grid.tab)[y].tab)[x]);
+}
+
+void	set_map_char(t_map *map, int x, int y, char c)
+{
+	((char *)((t_vector *)map->grid.tab)[y].tab)[x] = c;
 }
