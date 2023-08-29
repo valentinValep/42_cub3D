@@ -17,7 +17,22 @@ void	render_minimap(t_context *context)
 		}
 }
 
+void	render_raycasting(t_context *context)
+{
+	for (int col = 0; col < WIN_WIDTH; col++)
+	{
+		for (int row = 0; row < WIN_HEIGHT; row++)
+		{
+			if (row < WIN_HEIGHT / 2)
+				set_img_pixel(&context->img, col, row, 0xB2FFFF);
+			else
+				set_img_pixel(&context->img, col, row, 0x348C31);
+		}
+	}
+}
+
 void	render(t_context *context)
 {
+	render_raycasting(context);
 	render_minimap(context);
 }
