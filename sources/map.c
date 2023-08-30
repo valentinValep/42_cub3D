@@ -69,6 +69,17 @@ int	parse_line(t_map *map, char *line)
 	return (0);
 }
 
+t_vec2	get_dir_from_char(char c)
+{
+	if (c == 'N')
+		return ((t_vec2){0, -1});
+	else if (c == 'S')
+		return ((t_vec2){0, 1});
+	else if (c == 'E')
+		return ((t_vec2){1, 0});
+	return ((t_vec2){-1, 0});
+}
+
 void	init_player(t_map *map)
 {
 	int		x;
@@ -84,9 +95,9 @@ void	init_player(t_map *map)
 			c = get_map_char(map, x, y);
 			if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
 			{
-				map->player.x = x + 0.5;
-				map->player.y = y + 0.5;
-				map->player.angle = c == 'N' ? 0 : c == 'E' ? M_PI_2 : c == 'S' ? M_PI : 3 * M_PI_2;
+				map->player.pos = (t_vec2){x + 0.5, y + 0.5};
+				map->player.dir = get_dir_from_char(c);
+				map->player.plane = (t_vec2){-map->player.dir.y, map->player.dir.x};
 				set_map_char(map, x, y, '0');
 				return ;
 			}

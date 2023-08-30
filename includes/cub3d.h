@@ -7,6 +7,7 @@
 # define WIN_WIDTH 800
 # define WIN_HEIGHT 600
 # define WIN_TITLE "Cub3D"
+# define WALL_HEIGHT 64
 
 typedef struct s_img {
 	void	*addr;
@@ -16,10 +17,15 @@ typedef struct s_img {
 	int		endian;
 }	t_img;
 
-typedef struct s_player {
+typedef struct s_vec2 {
 	float	x;
 	float	y;
-	float	angle;
+}	t_vec2;
+
+typedef struct s_player {
+	t_vec2	pos;
+	t_vec2	dir;
+	t_vec2	plane;
 }	t_player;
 
 typedef struct s_map {
