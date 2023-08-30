@@ -74,7 +74,7 @@ void	ray_caster(t_context *context, int col)
 		}
 		if (get_map_char(&context->map, ray_pos.x, ray_pos.y) == '1')
 		{
-			const float	wall_dist = sqrtf(powf(ray_pos.x - context->map.player.pos.x, 2) + powf(ray_pos.y - context->map.player.pos.y, 2));
+			const float	wall_dist = sqrtf(powf(ray_pos.x - context->map.player.pos.x, 2) + powf(ray_pos.y - context->map.player.pos.y, 2)) * fabs(cosf(atan2f(ray_pos.y - context->map.player.pos.y, ray_pos.x - context->map.player.pos.x) - atan2f(context->map.player.dir.y, context->map.player.dir.x)));
 			const int	wall_height = (int)(WALL_HEIGHT / wall_dist);
 			const int	wall_start = WIN_HEIGHT / 2 - wall_height / 2;
 			const int	wall_end = WIN_HEIGHT / 2 + wall_height / 2;
