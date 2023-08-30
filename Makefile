@@ -19,6 +19,7 @@ OBJ := main.o \
 	map.o \
 	rendering.o \
 	images.o \
+	inputs.o \
 
 OBJ := $(addprefix $(BINARIES_DIR),$(OBJ))
 

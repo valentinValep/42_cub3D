@@ -24,6 +24,8 @@ typedef struct s_vec2 {
 
 typedef struct s_player {
 	t_vec2	pos;
+	t_vec2	speed;
+	float	rotate;
 	t_vec2	dir;
 	t_vec2	plane;
 }	t_player;
@@ -45,6 +47,10 @@ typedef struct s_context {
 
 // errors.c
 int		basic_error(char *str, int ret);
+
+// inputs.c
+int		destroy_hook(t_context *context);
+int	keydown_hook(int keycode, t_context *context);
 
 // images.c
 void	set_img_pixel(t_img *img, int x, int y, int color);

@@ -96,6 +96,8 @@ void	init_player(t_map *map)
 			if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
 			{
 				map->player.pos = (t_vec2){x + 0.5, y + 0.5};
+				map->player.speed = (t_vec2){0., 0.};
+				map->player.rotate = 0.;
 				map->player.dir = get_dir_from_char(c);
 				map->player.plane = (t_vec2){-map->player.dir.y, map->player.dir.x};
 				set_map_char(map, x, y, '0');
@@ -134,6 +136,11 @@ int	init_map(t_map *map, char *path)
 
 char	get_map_char(t_map *map, int x, int y)
 {
+	if (x < 0 || x >= map->width || y < 0 || y >= map->height)
+	{
+		printf("Get map char error : x: %d, y: %d\n", x, y);
+		return ('1');
+	}
 	return (((char *)((t_vector *)map->grid.tab)[y].tab)[x]);
 }
 

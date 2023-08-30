@@ -64,26 +64,23 @@ void	ray_caster(t_context *context, int col)
 			compute_next_check_diff(ray_dir.y, ray_pos.y)};
 		if (ray_dir.x / next_check_diff.x < ray_dir.y / next_check_diff.y)
 		{
-			ray_pos.x += next_check_diff.x;
+			ray_pos.x = roundf(ray_pos.x + next_check_diff.x);
 			ray_pos.y += ray_dir.y / (next_check_diff.x / ray_dir.x);
 		}
 		else
 		{
 			ray_pos.x += ray_dir.x / (next_check_diff.y / ray_dir.y);
-			ray_pos.y += next_check_diff.y;
-		}
-		if (get_map_char(&context->map, ray_pos.x, ray_pos.y) == '1')
-		{
-			const float	wall_dist = sqrtf(powf(ray_pos.x - context->map.player.pos.x, 2) + powf(ray_pos.y - context->map.player.pos.y, 2)) * fabs(cosf(atan2f(ray_pos.y - context->map.player.pos.y, ray_pos.x - context->map.player.pos.x) - atan2f(context->map.player.dir.y, context->map.player.dir.x)));
-			const int	wall_height = (int)(WALL_HEIGHT / wall_dist);
-			const int	wall_start = WIN_HEIGHT / 2 - wall_height / 2;
-			const int	wall_end = WIN_HEIGHT / 2 + wall_height / 2;
-			for (int row = wall_start; row < wall_end; row++)
-				set_img_pixel(&context->img, col, row, 0xFFFF00);
-			set_img_pixel(&context->img, col, wall_start - 1, 0x000000);
-			set_img_pixel(&context->img, col, wall_end + 1, 0x000000);
+			ray_pos.y += roundf(ray_pos.y + next_check_diff.y);
 		}
 	}
+	const float	wall_dist = sqrtf(powf(ray_pos.x - context->map.player.pos.x, 2) + powf(ray_pos.y - context->map.player.pos.y, 2)) * fabs(cosf(atan2f(ray_pos.y - context->map.player.pos.y, ray_pos.x - context->map.player.pos.x) - atan2f(context->map.player.dir.y, context->map.player.dir.x)));
+	const int	wall_height = (int)(WALL_HEIGHT / wall_dist);
+	const int	wall_start = WIN_HEIGHT / 2 - wall_height / 2;
+	const int	wall_end = WIN_HEIGHT / 2 + wall_height / 2;
+	for (int row = wall_start; row < wall_end; row++)
+		set_img_pixel(&context->img, col, row, 0xFFFF00);
+	set_img_pixel(&context->img, col, wall_start - 1, 0x000000);
+	set_img_pixel(&context->img, col, wall_end + 1, 0x000000);
 }
 
 void	render_raycasting(t_context *context)
