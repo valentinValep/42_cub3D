@@ -18,6 +18,7 @@ OBJ := main.o \
 	errors.o \
 	map.o \
 	rendering.o \
+	rendering_minimap.o \
 	images.o \
 	inputs.o \
 

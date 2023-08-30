@@ -54,6 +54,11 @@ void	compute_inputs(t_context *context)
 			context->map.player.pos.y += context->map.player.speed.y;
 		context->map.player.speed.y = 0;
 	}
+	if (context->map.player.rotate != 0)
+	{
+		rotate_player(context, context->map.player.rotate);
+		context->map.player.rotate = 0;
+	}
 }
 
 void	destroy_context(t_context *context)

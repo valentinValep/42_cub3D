@@ -22,6 +22,11 @@ typedef struct s_vec2 {
 	float	y;
 }	t_vec2;
 
+typedef struct s_map_square {
+	int	x;
+	int	y;
+}	t_map_square;
+
 typedef struct s_player {
 	t_vec2	pos;
 	t_vec2	speed;
@@ -29,6 +34,11 @@ typedef struct s_player {
 	t_vec2	dir;
 	t_vec2	plane;
 }	t_player;
+
+typedef struct s_ray {
+	t_vec2	pos;
+	t_vec2	dir;
+}	t_ray;
 
 typedef struct s_map {
 	t_player	player;
@@ -61,7 +71,8 @@ int		init_map(t_map *map, char *path);
 char	get_map_char(t_map *map, int x, int y);
 void	set_map_char(t_map *map, int x, int y, char c);
 
-// rendering.c
+// rendering[*].c
 void	render(t_context *context);
+void	render_minimap(t_context *context);
 
 #endif
