@@ -7,8 +7,8 @@ float	invert(float n)
 		return (1e32);
 	return (1 / n);
 }
-
-float	find_wall(t_map *map, t_ray *ray)
+#include <stdio.h>
+float	find_wall_dist(t_map *map, t_ray *ray)
 {
 	t_map_square	wall;
 	const t_vec2	delta_dist = {
@@ -18,8 +18,8 @@ float	find_wall(t_map *map, t_ray *ray)
 	float			res;
 
 	wall = (t_map_square){(int)ray->pos.x, (int)ray->pos.y};
-	side_dist.x = ((ray->dir.x > 0) - (ray->pos.x - wall.x)) * delta_dist.x;
-	side_dist.y = ((ray->dir.y > 0) - (ray->pos.y - wall.y)) * delta_dist.y;
+	side_dist.x = fabsf((ray->dir.x > 0) - (ray->pos.x - wall.x)) * delta_dist.x;
+	side_dist.y = fabsf((ray->dir.y > 0) - (ray->pos.y - wall.y)) * delta_dist.y;
 	while (get_map_char(map, wall.x, wall.y) != '1')
 	{
 		if (side_dist.x < side_dist.y)
@@ -54,7 +54,7 @@ void	render_wall(t_context *context, int col, float wall_dist)
 			set_img_pixel(&context->img, col, row, 0x348C31);
 	}
 }
-
+#include <stdio.h>
 void	ray_caster(t_context *context, int col)
 {
 	const float		camera_x = 2 * col / (float)WIN_WIDTH - 1;
@@ -65,7 +65,7 @@ void	ray_caster(t_context *context, int col)
 		context->map.player.dir.x + context->map.player.plane.x * camera_x,
 		context->map.player.dir.y + context->map.player.plane.y * camera_x};
 	ray.pos = context->map.player.pos;
-	wall_dist = find_wall(&context->map, &ray);
+	wall_dist = find_wall_dist(&context->map, &ray);
 	render_wall(context, col, wall_dist);
 }
 
