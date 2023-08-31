@@ -43,9 +43,13 @@ all : $(NAME)
 
 clean :
 	$(RM) $(OBJ)
+	$(RM) $(DEPS)
+	make -C $(LIBRARIES_DIR)libft clean
+	make -C $(LIBRARIES_DIR)minilibx clean
 
 fclean : clean
 	$(RM) $(NAME)
+	make -C $(LIBRARIES_DIR)libft fclean
 
 re : fclean all
 
