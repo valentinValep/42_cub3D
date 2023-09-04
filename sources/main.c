@@ -7,10 +7,9 @@ int	init_context(t_context *context, char **argv)
 {
 	int	ret;
 
-	(void)argv;
-	if ((ret = init_map(&context->map, argv[1])))
-		return (ret);
 	context->mlx = mlx_init(); // @TODO check if mlx_init() failed
+	if ((ret = init_map(context, argv[1])))
+		return (ret);
 	context->win = mlx_new_window(
 		context->mlx, WIN_WIDTH, WIN_HEIGHT, WIN_TITLE); // @TODO check if mlx_new_window() failed
 	context->img.addr = mlx_new_image(

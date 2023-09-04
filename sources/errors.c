@@ -2,6 +2,6 @@
 
 int	basic_error(char *str, int ret)
 {
-	printf("%s", str);
+	printf("Error : %s", str);
 	return (ret);
 }

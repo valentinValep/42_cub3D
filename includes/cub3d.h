@@ -11,8 +11,11 @@
 
 # define NORTH 0
 # define SOUTH 1
-# define WEST 2
-# define EAST 3
+# define EAST 2
+# define WEST 3
+
+# define CEIL 4
+# define GROUND 5
 
 typedef struct s_img {
 	void	*addr;
@@ -21,6 +24,12 @@ typedef struct s_img {
 	int		line_len;
 	int		endian;
 }	t_img;
+
+typedef struct s_texture {
+	t_img	img;
+	int		width;
+	int		height;
+}	t_texture;
 
 typedef struct s_vec2 {
 	float	x;
@@ -35,9 +44,9 @@ typedef struct s_map_square {
 typedef struct s_player {
 	t_vec2	pos;
 	t_vec2	speed;
-	float	rotate;
 	t_vec2	dir;
 	t_vec2	plane;
+	float	rotate;
 }	t_player;
 
 typedef struct s_ray {
@@ -53,6 +62,9 @@ typedef struct s_nearest_wall {
 typedef struct s_map {
 	t_player	player;
 	t_vector	grid; // vector<vector<char>>
+	t_texture	textures[4];
+	int			ceil_color;
+	int			ground_color;
 	int			width;
 	int			height;
 	int			has_player;
@@ -77,7 +89,7 @@ void	set_img_pixel(t_img *img, int x, int y, int color);
 int		get_img_pixel(t_img *img, int x, int y);
 
 // map.cs
-int		init_map(t_map *map, char *path);
+int		init_map(t_context *context, char *path);
 char	get_map_char(t_map *map, int x, int y);
 void	set_map_char(t_map *map, int x, int y, char c);
 
