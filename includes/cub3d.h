@@ -9,6 +9,11 @@
 # define WIN_TITLE "Cub3D"
 # define WALL_HEIGHT 64
 
+# define NORTH 0
+# define SOUTH 1
+# define WEST 2
+# define EAST 3
+
 typedef struct s_img {
 	void	*addr;
 	char	*pixels;
@@ -39,6 +44,11 @@ typedef struct s_ray {
 	t_vec2	pos;
 	t_vec2	dir;
 }	t_ray;
+
+typedef struct s_nearest_wall {
+	float	dist;
+	int		side;
+}	t_nearest_wall;
 
 typedef struct s_map {
 	t_player	player;

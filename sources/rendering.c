@@ -8,14 +8,14 @@ float	invert(float n)
 	return (1 / n);
 }
 #include <stdio.h>
-float	find_wall_dist(t_map *map, t_ray *ray)
+t_nearest_wall	find_nearest_wall(t_map *map, t_ray *ray)
 {
 	t_map_square	wall;
 	const t_vec2	delta_dist = {
 		fabsf(invert(ray->dir.x)),
 		fabsf(invert(ray->dir.y))};
 	t_vec2			side_dist;
-	float			res;
+	t_nearest_wall	res;
 
 	wall = (t_map_square){(int)ray->pos.x, (int)ray->pos.y};
 	side_dist.x = fabsf((ray->dir.x > 0) - (ray->pos.x - wall.x)) * delta_dist.x;
@@ -25,31 +25,47 @@ float	find_wall_dist(t_map *map, t_ray *ray)
 		if (side_dist.x < side_dist.y)
 		{
 			wall.x += (ray->dir.x > 0) * 2 - 1;
-			res = side_dist.x;
+			res.dist = side_dist.x;
+			res.side = WEST * (ray->dir.x < 0) + EAST * (ray->dir.x > 0);;
 			side_dist.x += delta_dist.x;
 		}
 		else
 		{
 			wall.y += (ray->dir.y > 0) * 2 - 1;
-			res = side_dist.y;
+			res.dist = side_dist.y;
+			res.side = NORTH * (ray->dir.y < 0) + SOUTH * (ray->dir.y > 0);;
 			side_dist.y += delta_dist.y;
 		}
 	}
 	return (res);
 }
 
-void	render_wall(t_context *context, int col, float wall_dist)
+int	get_wall_color(int side)
 {
-	const float		line_height = WIN_HEIGHT / wall_dist;
+	if (side == NORTH)
+		return (0x2222BB);
+	if (side == SOUTH)
+		return (0xFF2222);
+	if (side == WEST)
+		return (0xBBBB22);
+	if (side == EAST)
+		return (0x22BB22);
+	return (0);
+}
+
+void	render_wall(t_context *context, int col, t_nearest_wall nearest_wall)
+{
+	const float		line_height = WIN_HEIGHT / nearest_wall.dist;
 	const int		draw_start = -line_height / 2 + WIN_HEIGHT / 2;
 	const int		draw_end = line_height / 2 + WIN_HEIGHT / 2;
+	const int		color = get_wall_color(nearest_wall.side);
 
 	for (int row = 0; row < WIN_HEIGHT; row++)
 	{
 		if (row < draw_start)
 			set_img_pixel(&context->img, col, row, 0xB2FFFF);
 		else if (row < draw_end)
-			set_img_pixel(&context->img, col, row, 0xFFFF00);
+			set_img_pixel(&context->img, col, row, color);
 		else
 			set_img_pixel(&context->img, col, row, 0x348C31);
 	}
@@ -59,14 +75,14 @@ void	ray_caster(t_context *context, int col)
 {
 	const float		camera_x = 2 * col / (float)WIN_WIDTH - 1;
 	t_ray			ray;
-	float			wall_dist;
+	t_nearest_wall	nearest_wall;
 
 	ray.dir = (t_vec2){
 		context->map.player.dir.x + context->map.player.plane.x * camera_x,
 		context->map.player.dir.y + context->map.player.plane.y * camera_x};
 	ray.pos = context->map.player.pos;
-	wall_dist = find_wall_dist(&context->map, &ray);
-	render_wall(context, col, wall_dist);
+	nearest_wall = find_nearest_wall(&context->map, &ray);
+	render_wall(context, col, nearest_wall);
 }
 
 void	render_main_scene(t_context *context)
