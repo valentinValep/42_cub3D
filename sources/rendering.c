@@ -7,7 +7,7 @@ float	invert(float n)
 		return (1e32);
 	return (1 / n);
 }
-#include <stdio.h>
+
 t_nearest_wall	find_nearest_wall(t_map *map, t_ray *ray)
 {
 	t_map_square	wall;
@@ -70,7 +70,7 @@ void	render_wall(t_context *context, int col, t_nearest_wall nearest_wall)
 			set_img_pixel(&context->img, col, row, 0x348C31);
 	}
 }
-#include <stdio.h>
+
 void	ray_caster(t_context *context, int col)
 {
 	const float		camera_x = 2 * col / (float)WIN_WIDTH - 1;
