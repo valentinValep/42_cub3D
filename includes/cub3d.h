@@ -23,13 +23,9 @@ typedef struct s_img {
 	int		bpp;
 	int		line_len;
 	int		endian;
-}	t_img;
-
-typedef struct s_texture {
-	t_img	img;
 	int		width;
 	int		height;
-}	t_texture;
+}	t_img;
 
 typedef struct s_vec2 {
 	float	x;
@@ -62,7 +58,7 @@ typedef struct s_nearest_wall {
 typedef struct s_map {
 	t_player	player;
 	t_vector	grid; // vector<vector<char>>
-	t_texture	textures[4];
+	t_img		textures[4];
 	int			ceil_color;
 	int			ground_color;
 	int			width;

@@ -17,6 +17,8 @@ int	init_context(t_context *context, char **argv)
 	context->img.pixels = mlx_get_data_addr(
 		context->img.addr, &context->img.bpp,
 		&context->img.line_len, &context->img.endian);
+	context->img.width = WIN_WIDTH;
+	context->img.height = WIN_HEIGHT;
 	return (0);
 }
 

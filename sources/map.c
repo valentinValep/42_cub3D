@@ -85,16 +85,16 @@ int	init_texture_and_color(t_context *context, int face, char *path)
 	}
 	if (face < 4)
 	{
-		context->map.textures[face].img.addr = mlx_xpm_file_to_image(
+		context->map.textures[face].addr = mlx_xpm_file_to_image(
 			context->mlx, path,
 			&context->map.textures[face].width, &context->map.textures[face].height);
-		if (!context->map.textures[face].img.addr)
+		if (!context->map.textures[face].addr)
 			return (basic_error("Failed to load texture\n", 1));
-		context->map.textures[face].img.pixels = mlx_get_data_addr(
-			context->map.textures[face].img.addr,
-			&context->map.textures[face].img.bpp,
-			&context->map.textures[face].img.line_len,
-			&context->map.textures[face].img.endian);
+		context->map.textures[face].pixels = mlx_get_data_addr(
+			context->map.textures[face].addr,
+			&context->map.textures[face].bpp,
+			&context->map.textures[face].line_len,
+			&context->map.textures[face].endian);
 		return (0);
 	}
 	if (parse_color(path,

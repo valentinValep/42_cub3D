@@ -52,22 +52,39 @@ int	get_wall_color(int side)
 		return (0x22BB22);
 	return (0);
 }
+#include <stdio.h>
+int	get_wall_pixel(t_context *context, float wall_row, t_nearest_wall nearest_wall)
+{
+	float	wall_x;
+
+	if (nearest_wall.side == NORTH || nearest_wall.side == SOUTH)
+		wall_x = context->map.player.pos.x + nearest_wall.dist * context->map.player.dir.x;
+	else
+		wall_x = context->map.player.pos.y + nearest_wall.dist * context->map.player.dir.y;
+	wall_x -= floor(wall_x);
+	// printf("wall_x: %f, wall_row: %f | ", wall_x, wall_row);
+	const int	tex_x = wall_x * context->map.textures[nearest_wall.side].width;
+	const int	tex_y = wall_row * context->map.textures[nearest_wall.side].height;
+	// printf("tex_x: %d, tex_y: %d | ", tex_x, tex_y);
+	// printf("width: %d, height: %d\n", context->map.textures[nearest_wall.side].width, context->map.textures[nearest_wall.side].height);
+	return (get_img_pixel(&context->map.textures[nearest_wall.side],
+			tex_x, tex_y));
+}
 
 void	render_wall(t_context *context, int col, t_nearest_wall nearest_wall)
 {
 	const float		line_height = WIN_HEIGHT / nearest_wall.dist;
 	const int		draw_start = -line_height / 2 + WIN_HEIGHT / 2;
 	const int		draw_end = line_height / 2 + WIN_HEIGHT / 2;
-	const int		color = get_wall_color(nearest_wall.side);
 
 	for (int row = 0; row < WIN_HEIGHT; row++)
 	{
 		if (row < draw_start)
-			set_img_pixel(&context->img, col, row, 0xB2FFFF);
+			set_img_pixel(&context->img, col, row, context->map.ceil_color);
 		else if (row < draw_end)
-			set_img_pixel(&context->img, col, row, color);
+			set_img_pixel(&context->img, col, row, get_wall_pixel(context, (row - draw_start) / (float)(draw_end - draw_start), nearest_wall));
 		else
-			set_img_pixel(&context->img, col, row, 0x348C31);
+			set_img_pixel(&context->img, col, row, context->map.ground_color);
 	}
 }
 
