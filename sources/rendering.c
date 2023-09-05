@@ -55,10 +55,8 @@ int	get_wall_pixel(t_context *context, float wall_row, t_nearest_wall nearest_wa
 		wall_x = context->map.player.pos.y + nearest_wall.perceived_distance * ray->dir.y;
 	wall_x -= floor(wall_x);
 	tex_x = wall_x * context->map.textures[nearest_wall.side].width;
-	//if ((nearest_wall.side == NORTH || nearest_wall.side == SOUTH) && context->map.player.dir.y < 0)
-	//	tex_x = context->map.textures[nearest_wall.side].width - tex_x - 1;
-	//if ((nearest_wall.side == WEST || nearest_wall.side == EAST) && context->map.player.dir.x > 0)
-	//	tex_x = context->map.textures[nearest_wall.side].width - tex_x - 1;
+	if (nearest_wall.side == SOUTH || nearest_wall.side == WEST)
+		tex_x = context->map.textures[nearest_wall.side].width - tex_x - 1;
 	tex_y = wall_row * context->map.textures[nearest_wall.side].height;
 	// printf("tex_x: %d, tex_y: %d | ", tex_x, tex_y);
 	// printf("width: %d, height: %d\n", context->map.textures[nearest_wall.side].width, context->map.textures[nearest_wall.side].height);
