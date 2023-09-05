@@ -39,7 +39,6 @@ t_nearest_wall	find_nearest_wall(t_map *map, t_ray *ray)
 			side_dist.y += delta_dist.y;
 		}
 	}
-	printf("dist: %f, side: %d\n", res.perceived_distance, res.side);
 	return (res);
 }
 
@@ -58,8 +57,6 @@ int	get_wall_pixel(t_context *context, float wall_row, t_nearest_wall nearest_wa
 	if (nearest_wall.side == SOUTH || nearest_wall.side == WEST)
 		tex_x = context->map.textures[nearest_wall.side].width - tex_x - 1;
 	tex_y = wall_row * context->map.textures[nearest_wall.side].height;
-	// printf("tex_x: %d, tex_y: %d | ", tex_x, tex_y);
-	// printf("width: %d, height: %d\n", context->map.textures[nearest_wall.side].width, context->map.textures[nearest_wall.side].height);
 	return (get_img_pixel(&context->map.textures[nearest_wall.side],
 			tex_x, tex_y));
 }
