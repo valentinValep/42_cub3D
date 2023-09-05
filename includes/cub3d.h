@@ -52,6 +52,7 @@ typedef struct s_ray {
 
 typedef struct s_nearest_wall {
 	float	dist;
+	float	perceived_distance;
 	int		side;
 }	t_nearest_wall;
 
