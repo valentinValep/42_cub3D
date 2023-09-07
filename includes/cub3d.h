@@ -8,7 +8,7 @@
 # define WIN_HEIGHT 600
 # define WIN_TITLE "Cub3D"
 # define WALL_HEIGHT 64
-
+// @TODO use enum
 # define NORTH 0
 # define SOUTH 1
 # define EAST 2
@@ -16,6 +16,17 @@
 
 # define CEIL 4
 # define GROUND 5
+
+# define KEY_NUMBER 6
+# define KEY_W 0
+# define KEY_S 1
+# define KEY_A 2
+# define KEY_D 3
+# define KEY_LEFT 4
+# define KEY_RIGHT 5
+
+#define SPEED 0.03
+#define ROTATION_SPEED 0.2
 
 typedef struct s_img {
 	void	*addr;
@@ -72,6 +83,7 @@ typedef struct s_context {
 	void	*win;
 	t_img	img;
 	t_map	map;
+	char	inputs[KEY_NUMBER];
 }	t_context;
 
 // errors.c
@@ -79,7 +91,9 @@ int		basic_error(char *str, int ret);
 
 // inputs.c
 int		destroy_hook(t_context *context);
-int	keydown_hook(int keycode, t_context *context);
+int		keydown_hook(int keycode, t_context *context);
+int		keyup_hook(int keycode, t_context *context);
+int		motion_hook(int x, int y, t_context *context);
 
 // images.c
 void	set_img_pixel(t_img *img, int x, int y, int color);

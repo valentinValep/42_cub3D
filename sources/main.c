@@ -10,6 +10,7 @@ int	init_context(t_context *context, char **argv)
 	context->mlx = mlx_init(); // @TODO check if mlx_init() failed
 	if ((ret = init_map(context, argv[1])))
 		return (ret);
+	mlx_do_key_autorepeatoff(context->mlx);
 	context->win = mlx_new_window(
 		context->mlx, WIN_WIDTH, WIN_HEIGHT, WIN_TITLE); // @TODO check if mlx_new_window() failed
 	context->img.addr = mlx_new_image(
@@ -19,6 +20,10 @@ int	init_context(t_context *context, char **argv)
 		&context->img.line_len, &context->img.endian);
 	context->img.width = WIN_WIDTH;
 	context->img.height = WIN_HEIGHT;
+	mlx_mouse_hide(context->mlx, context->win);
+	mlx_mouse_move(context->mlx, context->win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
+	for (int i = 0; i < KEY_NUMBER; i++)
+		context->inputs[i] = 0;
 	return (0);
 }
 
@@ -37,8 +42,37 @@ void	rotate_player(t_context *context, float angle)
 		+ context->map.player.plane.y * cos(angle);
 }
 
+void	compute_key_pressed(t_context *context)
+{
+	if (context->inputs[KEY_W])
+	{
+		context->map.player.speed.x = context->map.player.dir.x * SPEED;
+		context->map.player.speed.y = context->map.player.dir.y * SPEED;
+	}
+	if (context->inputs[KEY_S])
+	{
+		context->map.player.speed.x = -context->map.player.dir.x * SPEED;
+		context->map.player.speed.y = -context->map.player.dir.y * SPEED;
+	}
+	if (context->inputs[KEY_A])
+	{
+		context->map.player.speed.x = -context->map.player.plane.x * SPEED;
+		context->map.player.speed.y = -context->map.player.plane.y * SPEED;
+	}
+	if (context->inputs[KEY_D])
+	{
+		context->map.player.speed.x = context->map.player.plane.x * SPEED;
+		context->map.player.speed.y = context->map.player.plane.y * SPEED;
+	}
+	if (context->inputs[KEY_LEFT])
+		context->map.player.rotate = -ROTATION_SPEED / 10;
+	if (context->inputs[KEY_RIGHT])
+		context->map.player.rotate = ROTATION_SPEED / 10;
+}
+
 void	compute_inputs(t_context *context)
 {
+	compute_key_pressed(context);
 	if (context->map.player.speed.x != 0)
 	{
 		if (get_map_char(&context->map,
@@ -93,8 +127,12 @@ int	main(int argc, char **argv)
 		return (ret);
 	mlx_hook(context.win, KeyPress, KeyPressMask,
 		keydown_hook, &context);
+	mlx_hook(context.win, KeyRelease, KeyReleaseMask,
+		keyup_hook, &context);
 	mlx_hook(context.win, DestroyNotify, NoEventMask,
 		destroy_hook, &context);
+	mlx_hook(context.win, MotionNotify, PointerMotionMask,
+		motion_hook, &context);
 	mlx_loop_hook(context.mlx, loop_hook, &context);
 	mlx_loop(context.mlx);
 	destroy_context(&context);

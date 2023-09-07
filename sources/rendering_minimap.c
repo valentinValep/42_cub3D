@@ -22,6 +22,7 @@ void	render_player(t_context *context)
 void	render_minimap(t_context *context)
 {
 	char	c;
+	(void)context;
 
 	for (int y = 0; y < context->map.height; y++)
 		for (int x = 0; x < context->map.width; x++)
