@@ -25,8 +25,8 @@
 # define KEY_LEFT 4
 # define KEY_RIGHT 5
 
-#define SPEED 0.03
-#define ROTATION_SPEED 0.2
+# define SPEED 0.03
+# define ROTATION_SPEED 0.2
 
 typedef struct s_img {
 	void	*addr;
