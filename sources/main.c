@@ -25,7 +25,7 @@ int	init_context(t_context *context, char **argv)
 		&context->img.line_len, &context->img.endian);
 	context->img.width = WIN_WIDTH;
 	context->img.height = WIN_HEIGHT;
-	//mlx_mouse_hide(context->mlx, context->win);
+	mlx_mouse_hide(context->mlx, context->win);
 	mlx_mouse_move(context->mlx, context->win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
 	for (int i = 0; i < KEY_NUMBER; i++)
 		context->inputs[i] = 0;
@@ -148,6 +148,6 @@ int	main(int argc, char **argv)
 	mlx_hook(context.win, MotionNotify, PointerMotionMask,
 		motion_hook, &context);
 	mlx_loop_hook(context.mlx, loop_hook, &context);
-	//mlx_loop(context.mlx);
+	mlx_loop(context.mlx);
 	destroy_context(&context);
 }

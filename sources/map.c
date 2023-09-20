@@ -214,33 +214,14 @@ t_vec2	get_dir_from_char(char c)
 	return ((t_vec2){-1, 0});
 }
 
-void	init_player(t_map *map)
+void	init_player(t_map *map, char c, t_vec2 pos)
 {
-	int		x;
-	int		y;
-	char	c;
-
-	y = 0;
-	while (y < map->height)
-	{
-		x = 0;
-		while (x < map->width)
-		{
-			c = get_map_char(map, x, y);
-			if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
-			{
-				map->player.pos = (t_vec2){x + 0.5, y + 0.5};
-				map->player.speed = (t_vec2){0., 0.};
-				map->player.rotate = 0.;
-				map->player.dir = get_dir_from_char(c);
-				map->player.plane = (t_vec2){-map->player.dir.y, map->player.dir.x};
-				set_map_char(map, x, y, '0');
-				return ;
-			}
-			x++;
-		}
-		y++;
-	}
+	map->player.pos = (t_vec2){pos.x + 0.5, pos.y + 0.5};
+	map->player.speed = (t_vec2){0., 0.};
+	map->player.rotate = 0.;
+	map->player.dir = get_dir_from_char(c);
+	map->player.plane = (t_vec2){-map->player.dir.y, map->player.dir.x};
+	map->has_player = 1;
 }
 
 static void destroy_raw_grid(t_vector *raw_grid)
@@ -335,12 +316,65 @@ static int	compute_map_width(t_vector raw_grid)
 	return (max_width);
 }
 
+static void	destroy_init_map_grid(char **grid, int i)
+{
+	while (i >= 0)
+	{
+		free(grid[i]);
+		i--;
+	}
+	free(grid);
+}
+
+static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
+{
+	int	i;
+
+	i = 0;
+	while (i < map->width)
+	{
+		if (is_whitespace_no_newline(src[i]) || src[i] == '0')
+			dest[i] = '0';
+		else if (src[i] == 'N' || src[i] == 'S'
+			|| src[i] == 'E' || src[i] == 'W')
+		{
+			if (!map->has_player)
+				init_player(map, src[i], (t_vec2){i, y});
+			else
+				return (basic_error("Multiple player\n", 1));
+		}
+		else if (src[i] == '1')
+			dest[i] = 1;
+		else
+			return (basic_error("Invalid character in map\n", 1));
+		dest[i] = src[i];
+		i++;
+	}
+	return (0);
+}
+
+static int	init_map_grid(t_vector raw_grid, t_map *map)
+{
+	int	i;
+
+	map->grid = malloc(sizeof(char *) * map->height);
+	if (!map->grid)
+		return (basic_error("Map memory allocation error\n", 1));
+	i = 0;
+	while (i < map->height)
+	{
+		map->grid[i] = malloc(sizeof(char) * map->width);
+		if (!map->grid[i])
+			return (destroy_init_map_grid(map->grid, i - 1),
+				basic_error("Map memory allocation error\n", 1));
+		transform_raw_line(map->grid[i], ((char **)raw_grid.tab)[i], map, i);
+		i++;
+	}
+	return (0);
+}
+
 static int transform_raw_grid(t_vector raw_grid, t_map *map)
 {
-	(void) raw_grid;
-	(void) map;
-	//int	i;
-
 	if (!raw_grid.tab)
 		return (basic_error("Map memory allocation error\n", 1));
 	replace_nl_by_zero(&raw_grid);
@@ -349,7 +383,9 @@ static int transform_raw_grid(t_vector raw_grid, t_map *map)
 	if (map->height == 0)
 		return (basic_error("Empty map\n", 1));
 	map->width = compute_map_width(raw_grid);
-
+	if (map->width == 0)
+		return (basic_error("Empty map\n", 1));
+	init_map_grid(raw_grid, map);
 	return (0);
 }
 
@@ -367,7 +403,6 @@ int	init_map(t_context *context, char *path)
 		return (basic_error("Map initialisation Error\n", 1));
 	if (!context->map.has_player)
 		return (basic_error("No player\n", 1));
-	init_player(&context->map);
 	return (0);
 }
 
