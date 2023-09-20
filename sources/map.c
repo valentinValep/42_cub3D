@@ -13,15 +13,15 @@ int	get_face(char *line)
 	int			face;
 
 	i = 0;
-	while (line[i] && line[i] == ' ')
+	while (line[i] && is_whitespace_no_newline(line[i]))
 		i++;
 	if (!line[i] || !line[i + 1] || !line[i + 2]
-		|| ((line[i] != 'N' || line[i + 1] != 'O' || line[i + 2] != ' ')
-			&& (line[i] != 'S' || line[i + 1] != 'O' || line[i + 2] != ' ')
-			&& (line[i] != 'E' || line[i + 1] != 'A' || line[i + 2] != ' ')
-			&& (line[i] != 'W' || line[i + 1] != 'E' || line[i + 2] != ' ')
-			&& (line[i] != 'C' || line[i + 1] != ' ')
-			&& (line[i] != 'F' || line[i + 1] != ' ')))
+		|| ((line[i] != 'N' || line[i + 1] != 'O' || !is_whitespace_no_newline(line[i + 2]))
+			&& (line[i] != 'S' || line[i + 1] != 'O' || !is_whitespace_no_newline(line[i + 2]))
+			&& (line[i] != 'E' || line[i + 1] != 'A' || !is_whitespace_no_newline(line[i + 2]))
+			&& (line[i] != 'W' || line[i + 1] != 'E' || !is_whitespace_no_newline(line[i + 2]))
+			&& (line[i] != 'C' || !is_whitespace_no_newline(line[i + 1]))
+			&& (line[i] != 'F' || !is_whitespace_no_newline(line[i + 1]))))
 		return (-1);
 	face = 0;
 	while (face < 6 && line[i] != face_chars[face])
@@ -34,7 +34,7 @@ int	get_first_char(char *line)
 	int	i;
 
 	i = 0;
-	while (line[i] && line[i] == ' ')
+	while (line[i] && is_whitespace_no_newline(line[i]))
 		i++;
 	return (line[i]);
 }
@@ -69,16 +69,16 @@ int	init_texture_and_color(t_context *context, int face, char *path)
 	int	i;
 
 	i = 0;
-	while (*path && *path == ' ')
+	while (*path && is_whitespace_no_newline(*path))
 		path++;
 	if (!*path || *path == '\n')
 		return (basic_error("Missing texture path\n", 1));
-	while (path[i] && path[i] != ' ' && path[i] != '\n')
+	while (path[i] && !is_whitespace_no_newline(path[i]) && path[i] != '\n')
 		i++;
-	if (path[i] == ' ' || path[i] == '\n')
+	if (is_whitespace_no_newline(path[i]) || path[i] == '\n')
 	{
 		path[i++] = 0;
-		while (path[i] && path[i] == ' ')
+		while (path[i] && is_whitespace_no_newline(path[i]))
 			i++;
 		if (path[i])
 			return (basic_error("Invalid character after texture path\n", 1));
@@ -144,7 +144,7 @@ int	verif_and_init_line(t_map *map, char *line)
 	width = 0;
 	while (line[i] && line[i] != '\n')
 	{
-		if (line[i] != ' ')
+		if (!is_whitespace_no_newline(line[i]))
 		{
 			width++;
 			if (line[i] == '1' || line[i] == '0')
@@ -178,7 +178,7 @@ int	insert_line_to_grid(t_vector *grid, char *line)
 	init_vec(&line_vec, sizeof(char));
 	while (line[i] && line[i] != '\n')
 	{
-		if (line[i] != ' ')
+		if (!is_whitespace_no_newline(line[i]))
 		{
 			if (push_vec(&line_vec, &line[i]))
 				return (basic_error("Failed to pushback to line_vec\n", 1));
