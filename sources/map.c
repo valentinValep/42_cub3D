@@ -40,26 +40,54 @@ char	get_first_char(char *line)
 	return (line[i]);
 }
 
+static int	pass_spaces(char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i] && is_whitespace_no_newline(line[i]))
+		i++;
+	return (i);
+}
+
+static int	pass_atoi_number(char *line)
+{
+	int	i;
+
+	i = 0;
+	if (line[i] == '-' || line[i] == '+')
+		i++;
+	while (line[i] && line[i] >= '0' && line[i] <= '9')
+		i++;
+	return (i);
+}
+
 int	parse_color(char *path, int *color)
 {
 	int	current_color;
 
 	current_color = ft_atoi(path);
-	if (!(*path >= '0' && *path <= '9') || current_color < 0 || current_color > 255)
+	if (!((*path >= '0' && *path <= '9') || *path == '+') || current_color < 0 || current_color > 255)
 		return (1);
 	*color = current_color << 16;
-	path = ft_strchr(path, ',');
-	if (!path || !(*(path + 1) >= '0' && *(path + 1) <= '9'))
+	path += pass_atoi_number(path);
+	path += pass_spaces(path);
+	if (*path != ',')
 		return (1);
-	current_color = ft_atoi(path + 1);
-	if (current_color < 0 || current_color > 255)
+	path++;
+	path += pass_spaces(path);
+	current_color = ft_atoi(path);
+	if (!((*path >= '0' && *path <= '9') || *path == '+') || current_color < 0 || current_color > 255)
 		return (1);
 	*color += current_color << 8;
-	path = ft_strchr(path + 1, ',');
-	if (!path || !(*(path + 1) >= '0' && *(path + 1) <= '9'))
+	path += pass_atoi_number(path);
+	path += pass_spaces(path);
+	if (*path != ',')
 		return (1);
-	current_color = ft_atoi(path + 1);
-	if (current_color < 0 || current_color > 255)
+	path++;
+	path += pass_spaces(path);
+	current_color = ft_atoi(path);
+	if (!((*path >= '0' && *path <= '9') || *path == '+') || current_color < 0 || current_color > 255)
 		return (1);
 	*color += current_color;
 	return (0);
@@ -74,18 +102,18 @@ int	init_texture_and_color(t_context *context, int face, char *path)
 		path++;
 	if (!*path || *path == '\n')
 		return (basic_error("Missing texture path\n", 1));
-	while (path[i] && !is_whitespace(path[i]))
-		i++;
-	if (is_whitespace(path[i]))
-	{
-		path[i++] = 0;
-		while (path[i] && is_whitespace_no_newline(path[i]))
-			i++;
-		if (path[i] && path[i] != '\n')
-			return (basic_error("Invalid character after texture path\n", 1));
-	}
 	if (face < 4)
 	{
+		while (path[i] && !is_whitespace(path[i]))
+			i++;
+		if (is_whitespace(path[i]))
+		{
+			path[i++] = 0;
+			while (path[i] && is_whitespace_no_newline(path[i]))
+				i++;
+			if (path[i] && path[i] != '\n')
+				return (basic_error("Invalid character after texture path\n", 1));
+		}
 		context->map.textures[face].addr = mlx_xpm_file_to_image(
 			context->mlx, path,
 			&context->map.textures[face].width, &context->map.textures[face].height);
@@ -123,7 +151,7 @@ int	parse_textures_init(t_context *context, int fd)
 			if (steps[face])
 				return (free(line), basic_error("Multiple textures for the same face\n", 1));
 			steps[face] = 1;
-			if (init_texture_and_color(context, face, line + 2))
+			if (init_texture_and_color(context, face, line + 2 + pass_spaces(line)))
 				return (free(line), basic_error("Failed to init texture\n", 1));
 			step++;
 			if (step == 6)
