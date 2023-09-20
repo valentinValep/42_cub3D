@@ -69,7 +69,7 @@ typedef struct s_nearest_wall {
 
 typedef struct s_map {
 	t_player	player;
-	t_vector	grid; // vector<vector<char>>
+	char		**grid;
 	t_img		textures[4];
 	int			ceil_color;
 	int			ground_color;

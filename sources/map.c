@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 #include "cub3d.h"
 #include "libft.h"
 
@@ -29,7 +30,7 @@ int	get_face(char *line)
 	return (faces[face]);
 }
 
-int	get_first_char(char *line)
+char	get_first_char(char *line)
 {
 	int	i;
 
@@ -120,84 +121,87 @@ int	parse_textures_init(t_context *context, int fd)
 		if (face >= 0)
 		{
 			if (steps[face])
-				return (basic_error("Multiple textures for the same face\n", 1));
+				return (free(line), basic_error("Multiple textures for the same face\n", 1));
 			steps[face] = 1;
 			if (init_texture_and_color(context, face, line + 2))
-				return (basic_error("Failed to init texture\n", 1));
+				return (free(line), basic_error("Failed to init texture\n", 1));
 			step++;
 			if (step == 6)
 				break ;
 		}
+		free(line);
 		line = get_next_line(fd);
 	}
+	if (line)
+		free(line);
 	if (step < 6)
 		return (basic_error("Missing textures\n", 1));
 	return (0);
 }
 
-int	verif_and_init_line(t_map *map, char *line)
-{
-	int	i;
-	int	width;
+//int	verif_and_init_line(t_map *map, char *line)
+//{
+//	int	i;
+//	int	width;
 
-	i = 0;
-	width = 0;
-	while (line[i] && line[i] != '\n')
-	{
-		if (!is_whitespace_no_newline(line[i]))
-		{
-			width++;
-			if (line[i] == '1' || line[i] == '0')
-				;
-			else if (line[i] == 'N' || line[i] == 'S'
-				|| line[i] == 'E' || line[i] == 'W')
-			{
-				if (map->has_player)
-					return (basic_error("Multiple player\n", 1));
-				map->has_player = 1;
-			}
-			else
-				return (basic_error("Invalid character in map\n", 1));
-		}
-		i++;
-	}
-	if (map->width == -1)
-		map->width = width;
-	else if (map->width != width)
-		return (basic_error("Invalid map width\n", 1));
-	map->height++;
-	return (0);
-}
+//	i = 0;
+//	width = 0;
+//	while (line[i] && line[i] != '\n')
+//	{
+//		if (!is_whitespace_no_newline(line[i]))
+//		{
+//			width++;
+//			if (line[i] == '1' || line[i] == '0')
+//				;
+//			else if (line[i] == 'N' || line[i] == 'S'
+//				|| line[i] == 'E' || line[i] == 'W')
+//			{
+//				if (map->has_player)
+//					return (basic_error("Multiple player\n", 1));
+//				map->has_player = 1;
+//			}
+//			else
+//				return (basic_error("Invalid character in map\n", 1));
+//		}
+//		i++;
+//	}
+//	if (map->width == -1)
+//		map->width = width;
+//	else if (map->width != width)
+//		return (basic_error("Invalid map width\n", 1));
+//	map->height++;
+//	return (0);
+//}
 
-int	insert_line_to_grid(t_vector *grid, char *line)
-{
-	int			i;
-	t_vector	line_vec;
+//int	insert_line_to_grid(t_vector *grid, char *line)
+//{
+//	int			i;
+//	t_vector	line_vec;
 
-	i = 0;
-	init_vec(&line_vec, sizeof(char));
-	while (line[i] && line[i] != '\n')
-	{
-		if (!is_whitespace_no_newline(line[i]))
-		{
-			if (push_vec(&line_vec, &line[i]))
-				return (basic_error("Failed to pushback to line_vec\n", 1));
-		}
-		i++;
-	}
-	if (push_vec(grid, &line_vec))
-		return (basic_error("Failed to pushback to grid\n", 1));
-	return (0);
-}
+//	i = 0;
+//	init_vec(&line_vec, sizeof(char));
+//	while (line[i] && line[i] != '\n')
+//	{
+//		if (!is_whitespace_no_newline(line[i]))
+//		{
+//			if (push_vec(&line_vec, &line[i]))
+//				return (basic_error("Failed to pushback to line_vec\n", 1));
+//		}
+//		i++;
+//	}
+//	if (push_vec(grid, &line_vec))
+//		return (basic_error("Failed to pushback to grid\n", 1));
+//	return (0);
+//}
 
-int	parse_line(t_map *map, char *line)
-{
-	if (verif_and_init_line(map, line))
-		return (1);
-	if (insert_line_to_grid(&map->grid, line))
-		return (1);
-	return (0);
-}
+//int	parse_line(t_map *map, char *line)
+//{
+//	if (verif_and_init_line(map, line))
+//		return (1);
+//	if (insert_line_to_grid(&map->grid, line))
+//		return (1);
+//	return (0);
+//}
 
 t_vec2	get_dir_from_char(char c)
 {
@@ -239,27 +243,128 @@ void	init_player(t_map *map)
 	}
 }
 
-int	init_map(t_context *context, char *path)
+static void destroy_raw_grid(t_vector *raw_grid)
 {
-	int		fd;
+	int	i;
+
+	i = 0;
+	while (i < raw_grid->len)
+	{
+		free(((char **)raw_grid->tab)[i]);
+		i++;
+	}
+	raw_grid->tab = NULL;
+	destroy_vec(raw_grid);
+}
+
+static t_vector	get_raw_grid(int fd)
+{
+	t_vector	res;
+	char		*line;
+
+	init_vec(&res, sizeof(char *));
+	line = get_next_line(fd);
+	if (!line)
+		return (destroy_raw_grid(&res), basic_error("Empty map\n", 0), res);
+	while (line)
+	{
+		if (push_vec(&res, &line))
+			return (destroy_raw_grid(&res), basic_error("Failed to pushback to raw_grid\n", 0), res);
+		line = get_next_line(fd);
+	}
+	return (res);
+}
+
+static void	trim_raw_grid(t_vector *raw_grid)
+{
 	char	*line;
 
-	context->map.width = -1;
-	context->map.height = 0;
+	while (raw_grid->len > 0)
+	{
+		line = ((char **)raw_grid->tab)[0];
+		if (!get_first_char(line))
+		{
+			free(line);
+			remove_vec(raw_grid, 0);
+		}
+		else
+			break ;
+	}
+	while (raw_grid->len > 0)
+	{
+		line = ((char **)raw_grid->tab)[(raw_grid->len - 1)];
+		if (!get_first_char(line))
+		{
+			free(line);
+			remove_vec(raw_grid, (raw_grid->len - 1));
+		}
+		else
+			break ;
+	}
+}
+
+static void	replace_nl_by_zero(t_vector *raw_grid)
+{
+	char	*c;
+	int		i;
+
+	i = 0;
+	while (i < raw_grid->len)
+	{
+		c = &((char **)raw_grid->tab)[i][
+			ft_strlen(((char **)raw_grid->tab)[i]) - 1];
+		if (*c == '\n')
+			*c = 0;
+		i++;
+	}
+}
+
+static int	compute_map_width(t_vector raw_grid)
+{
+	int		i;
+	size_t	max_width;
+
+	i = 0;
+	max_width = 0;
+	while (i < raw_grid.len)
+	{
+		if (ft_strlen(((char **)raw_grid.tab)[i]) > max_width)
+			max_width = ft_strlen(((char **)raw_grid.tab)[i]);
+		i++;
+	}
+	return (max_width);
+}
+
+static int transform_raw_grid(t_vector raw_grid, t_map *map)
+{
+	(void) raw_grid;
+	(void) map;
+	//int	i;
+
+	if (!raw_grid.tab)
+		return (basic_error("Map memory allocation error\n", 1));
+	replace_nl_by_zero(&raw_grid);
+	trim_raw_grid(&raw_grid);
+	map->height = raw_grid.len;
+	if (map->height == 0)
+		return (basic_error("Empty map\n", 1));
+	map->width = compute_map_width(raw_grid);
+
+	return (0);
+}
+
+int	init_map(t_context *context, char *path)
+{
+	int			fd;
+
 	context->map.has_player = 0;
-	init_vec(&context->map.grid, sizeof(t_vector));
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 		return (basic_error("Failed to open file\n", 1));
 	if (parse_textures_init(context, fd))
-		return (basic_error("Failed to initialise textures and colors\n", 1));
-	while ((line = get_next_line(fd)))
-	{
-		if (parse_line(&context->map, line))
-			return (1);
-	}
-	if (context->map.width == -1)
-		return (basic_error("Empty map\n", 1));
+		return (gnl_close(fd), basic_error("Failed to initialise textures and colors\n", 1));
+	if (transform_raw_grid(get_raw_grid(fd), &context->map))
+		return (basic_error("Map initialisation Error\n", 1));
 	if (!context->map.has_player)
 		return (basic_error("No player\n", 1));
 	init_player(&context->map);
@@ -273,10 +378,10 @@ char	get_map_char(t_map *map, int x, int y)
 		printf("Get map char error : x: %d, y: %d\n", x, y);
 		return ('1');
 	}
-	return (((char *)((t_vector *)map->grid.tab)[y].tab)[x]);
+	return ((map->grid[y])[x]);
 }
 
 void	set_map_char(t_map *map, int x, int y, char c)
 {
-	((char *)((t_vector *)map->grid.tab)[y].tab)[x] = c;
+	(map->grid[y])[x] = c;
 }

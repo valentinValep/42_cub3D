@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <X11/X.h>
 #include <math.h>
+#include <stdlib.h>
 #include "cub3d.h"
 
 int	init_context(t_context *context, char **argv)
@@ -9,7 +10,11 @@ int	init_context(t_context *context, char **argv)
 
 	context->mlx = mlx_init(); // @TODO check if mlx_init() failed
 	if ((ret = init_map(context, argv[1])))
+	{
+		mlx_destroy_display(context->mlx);
+		free(context->mlx);
 		return (ret);
+	}
 	mlx_do_key_autorepeatoff(context->mlx);
 	context->win = mlx_new_window(
 		context->mlx, WIN_WIDTH, WIN_HEIGHT, WIN_TITLE); // @TODO check if mlx_new_window() failed
@@ -20,7 +25,7 @@ int	init_context(t_context *context, char **argv)
 		&context->img.line_len, &context->img.endian);
 	context->img.width = WIN_WIDTH;
 	context->img.height = WIN_HEIGHT;
-	mlx_mouse_hide(context->mlx, context->win);
+	//mlx_mouse_hide(context->mlx, context->win);
 	mlx_mouse_move(context->mlx, context->win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
 	for (int i = 0; i < KEY_NUMBER; i++)
 		context->inputs[i] = 0;
@@ -98,7 +103,16 @@ void	compute_inputs(t_context *context)
 
 void	destroy_context(t_context *context)
 {
-	(void)context;
+	for (int i = 0; i < context->map.height; i++)
+		free(context->map.grid[i]);
+	free(context->map.grid);
+	for (int i = 0; i < 4; i++)
+		if (context->map.textures[i].addr)
+			mlx_destroy_image(context->mlx, context->map.textures[i].addr);
+	mlx_destroy_window(context->mlx, context->win);
+	mlx_destroy_image(context->mlx, context->img.addr);
+	mlx_destroy_display(context->mlx);
+	free(context->mlx);
 }
 
 void	update(t_context *context)
@@ -134,6 +148,6 @@ int	main(int argc, char **argv)
 	mlx_hook(context.win, MotionNotify, PointerMotionMask,
 		motion_hook, &context);
 	mlx_loop_hook(context.mlx, loop_hook, &context);
-	mlx_loop(context.mlx);
+	//mlx_loop(context.mlx);
 	destroy_context(&context);
 }
