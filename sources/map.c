@@ -74,14 +74,14 @@ int	init_texture_and_color(t_context *context, int face, char *path)
 		path++;
 	if (!*path || *path == '\n')
 		return (basic_error("Missing texture path\n", 1));
-	while (path[i] && !is_whitespace_no_newline(path[i]) && path[i] != '\n')
+	while (path[i] && !is_whitespace(path[i]))
 		i++;
-	if (is_whitespace_no_newline(path[i]) || path[i] == '\n')
+	if (is_whitespace(path[i]))
 	{
 		path[i++] = 0;
 		while (path[i] && is_whitespace_no_newline(path[i]))
 			i++;
-		if (path[i])
+		if (path[i] && path[i] != '\n')
 			return (basic_error("Invalid character after texture path\n", 1));
 	}
 	if (face < 4)
