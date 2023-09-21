@@ -28,10 +28,16 @@ DEPS := ${OBJ:.o=.d}
 
 RM := rm -f
 
-$(NAME) : $(OBJ)
-	make -C $(LIBRARIES_DIR)libft
-	make -C $(LIBRARIES_DIR)minilibx
+$(NAME) : $(OBJ) $(LIBRARIES_DIR)libft/libft.a $(LIBRARIES_DIR)minilibx/libmlx.a
 	$(CC) $(OBJ) $(LIBRARIES) -o $(NAME)
+
+$(LIBRARIES_DIR)libft/libft.a:
+	git submodule update --init --recursive
+	make -C $(LIBRARIES_DIR)libft
+
+$(LIBRARIES_DIR)minilibx/libmlx.a:
+	git submodule update --init --recursive
+	make -C $(LIBRARIES_DIR)minilibx
 
 $(BINARIES_DIR) :
 	mkdir $(BINARIES_DIR)
