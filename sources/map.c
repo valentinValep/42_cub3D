@@ -62,7 +62,7 @@ static int	pass_atoi_number(char *line)
 	return (i);
 }
 
-static int	parse_one_color(char **path, int *color)
+static int	parse_one_color(char **path, int *color, int shift)
 {
 	int	current_color;
 
@@ -72,26 +72,24 @@ static int	parse_one_color(char **path, int *color)
 		|| current_color < 0
 		|| current_color > 255)
 		return (1);
-	*color += current_color;
+	*color += current_color << shift;
 	(*path) += pass_atoi_number((*path));
 	(*path) += pass_spaces((*path));
+	return (0);
 }
 
 int	parse_color(char *path, int *color)
 {
 	*color = 0;
-	parse_one_color(&path, color);
-	if (*path != ',')
+	if (parse_one_color(&path, color, 16) || *path != ',')
 		return (1);
 	path++;
 	path += pass_spaces(path);
-	parse_one_color(&path, color);
-	if (*path != ',')
+	if (parse_one_color(&path, color, 8) || *path != ',')
 		return (1);
 	path++;
 	path += pass_spaces(path);
-	parse_one_color(&path, color);
-	if (*path && *path != '\n')
+	if (parse_one_color(&path, color, 0) || (*path && *path != '\n'))
 		return (1);
 	return (0);
 }
@@ -334,7 +332,10 @@ static int	init_map_grid(t_vector raw_grid, t_map *map)
 		if (!map->grid[i])
 			return (destroy_init_map_grid(map->grid, i - 1),
 				basic_error("Map memory allocation error\n", 1));
-		transform_raw_line(map->grid[i], ((char **)raw_grid.tab)[i], map, i);
+		if (transform_raw_line(map->grid[i],
+				((char **)raw_grid.tab)[i], map, i))
+			return (destroy_init_map_grid(map->grid, i - 1),
+				basic_error("", 1));
 		i++;
 	}
 	return (0);
@@ -352,7 +353,8 @@ static int transform_raw_grid(t_vector raw_grid, t_map *map)
 	map->width = compute_map_width(raw_grid);
 	if (map->width == 0)
 		return (basic_error("Empty map\n", 1));
-	init_map_grid(raw_grid, map);
+	if (init_map_grid(raw_grid, map))
+		return (basic_error("", 1));
 	return (0);
 }
 
