@@ -199,8 +199,8 @@ static void destroy_raw_grid(t_vector *raw_grid)
 		free(((char **)raw_grid->tab)[i]);
 		i++;
 	}
-	raw_grid->tab = NULL;
 	destroy_vec(raw_grid);
+	raw_grid->tab = NULL;
 }
 
 static t_vector	get_raw_grid(int fd)
@@ -310,6 +310,8 @@ static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
 		}
 		else if (src[i] == '1')
 			dest[i] = 1;
+		else if (src[i] == '\n')
+			return (0);
 		else
 			return (basic_error("Invalid character in map\n", 1));
 		dest[i] = src[i];
@@ -328,14 +330,13 @@ static int	init_map_grid(t_vector raw_grid, t_map *map)
 	i = 0;
 	while (i < map->height)
 	{
-		map->grid[i] = malloc(sizeof(char) * map->width);
+		map->grid[i] = calloc(sizeof(char), map->width);
 		if (!map->grid[i])
 			return (destroy_init_map_grid(map->grid, i - 1),
 				basic_error("Map memory allocation error\n", 1));
 		if (transform_raw_line(map->grid[i],
 				((char **)raw_grid.tab)[i], map, i))
-			return (destroy_init_map_grid(map->grid, i - 1),
-				basic_error("", 1));
+			return (destroy_init_map_grid(map->grid, i), 1);
 		i++;
 	}
 	return (0);
@@ -344,17 +345,57 @@ static int	init_map_grid(t_vector raw_grid, t_map *map)
 static int transform_raw_grid(t_vector raw_grid, t_map *map)
 {
 	if (!raw_grid.tab)
-		return (basic_error("Map memory allocation error\n", 1));
+		return (destroy_raw_grid(&raw_grid),
+			basic_error("Map memory allocation error\n", 1));
 	replace_nl_by_zero(&raw_grid);
 	trim_raw_grid(&raw_grid);
 	map->height = raw_grid.len;
 	if (map->height == 0)
-		return (basic_error("Empty map\n", 1));
+		return (destroy_raw_grid(&raw_grid),
+			basic_error("Empty map\n", 1));
 	map->width = compute_map_width(raw_grid);
 	if (map->width == 0)
-		return (basic_error("Empty map\n", 1));
+		return (destroy_raw_grid(&raw_grid),
+			basic_error("Empty map\n", 1));
 	if (init_map_grid(raw_grid, map))
-		return (basic_error("", 1));
+		return (destroy_raw_grid(&raw_grid), 1);
+	destroy_raw_grid(&raw_grid);
+	return (0);
+}
+
+static int	check_map_closure_rec(t_map *map, int *grid, int pos[2])
+{
+	if (pos[0] < 0 || pos[0] >= map->width || pos[1] < 0 || pos[1] >= map->height)
+		return (1);
+	if (grid[pos[1] * map->width + pos[0]])
+		return (0);
+	grid[pos[1] * map->width + pos[0]] = 1;
+	if (get_map_char(map, pos[0], pos[1]) == '1')
+		return (0);
+	if (check_map_closure_rec(map, grid, (int [2]){pos[0] + 1, pos[1]}))
+		return (1);
+	if (check_map_closure_rec(map, grid, (int [2]){pos[0] - 1, pos[1]}))
+		return (1);
+	if (check_map_closure_rec(map, grid, (int [2]){pos[0], pos[1] + 1}))
+		return (1);
+	if (check_map_closure_rec(map, grid, (int [2]){pos[0], pos[1] - 1}))
+		return (1);
+	return (0);
+}
+
+static int	check_map_closure(t_map *map)
+{
+	int *const	grid = ft_calloc(sizeof(int), map->width * map->height);
+
+	if (!grid)
+		return (basic_error("Map memory allocation error\n", 1));
+	if (check_map_closure_rec(map, grid,
+			(int [2]){map->player.pos.x, map->player.pos.y}))
+	{
+		free(grid);
+		return (basic_error("Map is not closed\n", 1));
+	}
+	free(grid);
 	return (0);
 }
 
@@ -374,6 +415,8 @@ int	init_map(t_context *context, char *path)
 		return (basic_error("Map initialisation Error\n", 1));
 	if (!context->map.has_player)
 		return (basic_error("No player\n", 1));
+	if (check_map_closure(&context->map))
+		return (basic_error("Error during map closure check\n", 1));
 	return (0);
 }
 
