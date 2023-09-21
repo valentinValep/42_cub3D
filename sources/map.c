@@ -62,34 +62,37 @@ static int	pass_atoi_number(char *line)
 	return (i);
 }
 
-int	parse_color(char *path, int *color)
+static int	parse_one_color(char **path, int *color)
 {
 	int	current_color;
 
-	current_color = ft_atoi(path);
-	if (!((*path >= '0' && *path <= '9') || *path == '+') || current_color < 0 || current_color > 255)
-		return (1);
-	*color = current_color << 16;
-	path += pass_atoi_number(path);
-	path += pass_spaces(path);
-	if (*path != ',')
-		return (1);
-	path++;
-	path += pass_spaces(path);
-	current_color = ft_atoi(path);
-	if (!((*path >= '0' && *path <= '9') || *path == '+') || current_color < 0 || current_color > 255)
-		return (1);
-	*color += current_color << 8;
-	path += pass_atoi_number(path);
-	path += pass_spaces(path);
-	if (*path != ',')
-		return (1);
-	path++;
-	path += pass_spaces(path);
-	current_color = ft_atoi(path);
-	if (!((*path >= '0' && *path <= '9') || *path == '+') || current_color < 0 || current_color > 255)
+	current_color = ft_atoi((*path));
+	if (!(ft_isdigit(*(*path)) || (*(*path) == '+'
+				&& ft_isdigit(*((*path) + 1))))
+		|| current_color < 0
+		|| current_color > 255)
 		return (1);
 	*color += current_color;
+	(*path) += pass_atoi_number((*path));
+	(*path) += pass_spaces((*path));
+}
+
+int	parse_color(char *path, int *color)
+{
+	*color = 0;
+	parse_one_color(&path, color);
+	if (*path != ',')
+		return (1);
+	path++;
+	path += pass_spaces(path);
+	parse_one_color(&path, color);
+	if (*path != ',')
+		return (1);
+	path++;
+	path += pass_spaces(path);
+	parse_one_color(&path, color);
+	if (*path && *path != '\n')
+		return (1);
 	return (0);
 }
 
@@ -166,70 +169,6 @@ int	parse_textures_init(t_context *context, int fd)
 		return (basic_error("Missing textures\n", 1));
 	return (0);
 }
-
-//int	verif_and_init_line(t_map *map, char *line)
-//{
-//	int	i;
-//	int	width;
-
-//	i = 0;
-//	width = 0;
-//	while (line[i] && line[i] != '\n')
-//	{
-//		if (!is_whitespace_no_newline(line[i]))
-//		{
-//			width++;
-//			if (line[i] == '1' || line[i] == '0')
-//				;
-//			else if (line[i] == 'N' || line[i] == 'S'
-//				|| line[i] == 'E' || line[i] == 'W')
-//			{
-//				if (map->has_player)
-//					return (basic_error("Multiple player\n", 1));
-//				map->has_player = 1;
-//			}
-//			else
-//				return (basic_error("Invalid character in map\n", 1));
-//		}
-//		i++;
-//	}
-//	if (map->width == -1)
-//		map->width = width;
-//	else if (map->width != width)
-//		return (basic_error("Invalid map width\n", 1));
-//	map->height++;
-//	return (0);
-//}
-
-//int	insert_line_to_grid(t_vector *grid, char *line)
-//{
-//	int			i;
-//	t_vector	line_vec;
-
-//	i = 0;
-//	init_vec(&line_vec, sizeof(char));
-//	while (line[i] && line[i] != '\n')
-//	{
-//		if (!is_whitespace_no_newline(line[i]))
-//		{
-//			if (push_vec(&line_vec, &line[i]))
-//				return (basic_error("Failed to pushback to line_vec\n", 1));
-//		}
-//		i++;
-//	}
-//	if (push_vec(grid, &line_vec))
-//		return (basic_error("Failed to pushback to grid\n", 1));
-//	return (0);
-//}
-
-//int	parse_line(t_map *map, char *line)
-//{
-//	if (verif_and_init_line(map, line))
-//		return (1);
-//	if (insert_line_to_grid(&map->grid, line))
-//		return (1);
-//	return (0);
-//}
 
 t_vec2	get_dir_from_char(char c)
 {
@@ -422,6 +361,8 @@ int	init_map(t_context *context, char *path)
 	int			fd;
 
 	context->map.has_player = 0;
+	if (ft_strlen(path) < 4 || ft_strcmp(path + ft_strlen(path) - 4, ".cub"))
+		return (basic_error("Invalid map file\n", 1));
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 		return (basic_error("Failed to open file\n", 1));

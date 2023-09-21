@@ -136,7 +136,7 @@ int	main(int argc, char **argv)
 	int			ret;
 
 	if (argc != 2)
-		return (basic_error("Need one argument\n", 1));
+		return (basic_error("Usage: ./cub3d <map_path (.cub extension)>\n", 1));
 	if ((ret = init_context(&context, argv)))
 		return (ret);
 	mlx_hook(context.win, KeyPress, KeyPressMask,
