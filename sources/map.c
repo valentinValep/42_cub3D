@@ -133,6 +133,13 @@ int	init_texture_and_color(t_context *context, int face, char *path)
 	return (0);
 }
 
+static void	destroy_textures(t_context *context)
+{
+	for (int i = 0; i < 4; i++)
+		if (context->map.textures[i].addr)
+			mlx_destroy_image(context->mlx, context->map.textures[i].addr);
+}
+
 int	parse_textures_init(t_context *context, int fd)
 {
 	char	*const steps = (char [6]){0, 0, 0, 0, 0, 0};
@@ -144,6 +151,8 @@ int	parse_textures_init(t_context *context, int fd)
 	line = get_next_line(fd);
 	if (!line)
 		return (basic_error("Empty file\n", 1));
+	for (int i = 0; i < 4; i++)
+		context->map.textures[i].addr = NULL;
 	while (line && get_first_char(line) != '1' && get_first_char(line) != '0')
 	{
 		face = get_face(line);
@@ -215,7 +224,8 @@ static t_vector	get_raw_grid(int fd)
 	while (line)
 	{
 		if (push_vec(&res, &line))
-			return (destroy_raw_grid(&res), basic_error("Failed to pushback to raw_grid\n", 0), res);
+			return (gnl_close(fd), destroy_raw_grid(&res),
+				basic_error("Failed to pushback to raw_grid\n", 0), res);
 		line = get_next_line(fd);
 	}
 	return (res);
@@ -294,28 +304,28 @@ static void	destroy_init_map_grid(char **grid, int i)
 static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
 {
 	int	i;
+	int	end;
 
-	i = 0;
-	while (i < map->width)
+	end = 0;
+	i = -1;
+	while (++i < map->width)
 	{
-		if (is_whitespace_no_newline(src[i]) || src[i] == '0')
-			dest[i] = '0';
-		else if (src[i] == 'N' || src[i] == 'S'
+		dest[i] = '0';
+		if (end)
+			continue ;
+		if (src[i] == 'N' || src[i] == 'S'
 			|| src[i] == 'E' || src[i] == 'W')
 		{
-			if (!map->has_player)
-				init_player(map, src[i], (t_vec2){i, y});
-			else
+			if (map->has_player)
 				return (basic_error("Multiple player\n", 1));
+			init_player(map, src[i], (t_vec2){i, y});
 		}
 		else if (src[i] == '1')
-			dest[i] = 1;
-		else if (src[i] == '\n')
-			return (0);
-		else
+			dest[i] = '1';
+		else if (!src[i])
+			end = 1;
+		else if (!(is_whitespace_no_newline(src[i]) || src[i] == '0'))
 			return (basic_error("Invalid character in map\n", 1));
-		dest[i] = src[i];
-		i++;
 	}
 	return (0);
 }
@@ -410,13 +420,13 @@ int	init_map(t_context *context, char *path)
 	if (fd == -1)
 		return (basic_error("Failed to open file\n", 1));
 	if (parse_textures_init(context, fd))
-		return (gnl_close(fd), basic_error("Failed to initialise textures and colors\n", 1));
+		return (destroy_textures(context), gnl_close(fd), basic_error("Failed to initialise textures and colors\n", 1));
 	if (transform_raw_grid(get_raw_grid(fd), &context->map))
-		return (basic_error("Map initialisation Error\n", 1));
+		return (destroy_textures(context), basic_error("Map initialisation Error\n", 1));
 	if (!context->map.has_player)
-		return (basic_error("No player\n", 1));
+		return (destroy_textures(context), basic_error("No player\n", 1));
 	if (check_map_closure(&context->map))
-		return (basic_error("Error during map closure check\n", 1));
+		return (destroy_textures(context), basic_error("Error during map closure check\n", 1));
 	return (0);
 }
 
