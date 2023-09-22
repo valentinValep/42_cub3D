@@ -3,3 +3,5 @@ build
 cub3D
 tester
 result
+result_maps.txt
+valgrind_result.txt

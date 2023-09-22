@@ -424,9 +424,13 @@ int	init_map(t_context *context, char *path)
 	if (transform_raw_grid(get_raw_grid(fd), &context->map))
 		return (destroy_textures(context), basic_error("Map initialisation Error\n", 1));
 	if (!context->map.has_player)
-		return (destroy_textures(context), basic_error("No player\n", 1));
+		return (destroy_textures(context),
+			destroy_init_map_grid(context->map.grid, context->map.height - 1),
+			basic_error("No player\n", 1));
 	if (check_map_closure(&context->map))
-		return (destroy_textures(context), basic_error("Error during map closure check\n", 1));
+		return (destroy_textures(context),
+			destroy_init_map_grid(context->map.grid, context->map.height - 1),
+			basic_error("Error during map closure check\n", 1));
 	return (0);
 }
 
