@@ -76,6 +76,7 @@ typedef struct s_map {
 	int			width;
 	int			height;
 	int			has_player;
+	char		*texture_initialisation_steps;
 }	t_map;
 
 typedef struct s_context {

@@ -17,13 +17,17 @@ int	get_face(char *line)
 	while (line[i] && is_whitespace_no_newline(line[i]))
 		i++;
 	if (!line[i] || !line[i + 1] || !line[i + 2]
-		|| ((line[i] != 'N' || line[i + 1] != 'O' || !is_whitespace_no_newline(line[i + 2]))
-			&& (line[i] != 'S' || line[i + 1] != 'O' || !is_whitespace_no_newline(line[i + 2]))
-			&& (line[i] != 'E' || line[i + 1] != 'A' || !is_whitespace_no_newline(line[i + 2]))
-			&& (line[i] != 'W' || line[i + 1] != 'E' || !is_whitespace_no_newline(line[i + 2]))
+		|| ((line[i] != 'N' || line[i + 1] != 'O'
+				|| !is_whitespace_no_newline(line[i + 2]))
+			&& (line[i] != 'S' || line[i + 1] != 'O'
+				|| !is_whitespace_no_newline(line[i + 2]))
+			&& (line[i] != 'E' || line[i + 1] != 'A'
+				|| !is_whitespace_no_newline(line[i + 2]))
+			&& (line[i] != 'W' || line[i + 1] != 'E'
+				|| !is_whitespace_no_newline(line[i + 2]))
 			&& (line[i] != 'C' || !is_whitespace_no_newline(line[i + 1]))
 			&& (line[i] != 'F' || !is_whitespace_no_newline(line[i + 1]))))
-		return (-1);
+		return (-2 + (!line[i] || line[i] == '\n'));
 	face = 0;
 	while (face < 6 && line[i] != face_chars[face])
 		face++;
@@ -94,81 +98,122 @@ int	parse_color(char *path, int *color)
 	return (0);
 }
 
-int	init_texture_and_color(t_context *context, int face, char *path)
+static int	init_texture(t_context *context, int face, char *path)
 {
 	int	i;
 
 	i = 0;
+	while (path[i] && !is_whitespace(path[i]))
+		i++;
+	if (is_whitespace(path[i]))
+	{
+		path[i++] = 0;
+		while (path[i] && is_whitespace_no_newline(path[i]))
+			i++;
+		if (path[i] && path[i] != '\n')
+			return (basic_error("Invalid character after texture path\n", 1));
+	}
+	context->map.textures[face].addr = mlx_xpm_file_to_image(
+			context->mlx, path, &context->map.textures[face].width,
+			&context->map.textures[face].height);
+	if (!context->map.textures[face].addr)
+		return (basic_error("Failed to load texture\n", 1));
+	context->map.textures[face].pixels = mlx_get_data_addr(
+			context->map.textures[face].addr,
+			&context->map.textures[face].bpp,
+			&context->map.textures[face].line_len,
+			&context->map.textures[face].endian);
+	return (0);
+}
+
+int	init_texture_and_color(t_context *context, int face, char *path)
+{
 	while (*path && is_whitespace_no_newline(*path))
 		path++;
 	if (!*path || *path == '\n')
 		return (basic_error("Missing texture path\n", 1));
 	if (face < 4)
-	{
-		while (path[i] && !is_whitespace(path[i]))
-			i++;
-		if (is_whitespace(path[i]))
-		{
-			path[i++] = 0;
-			while (path[i] && is_whitespace_no_newline(path[i]))
-				i++;
-			if (path[i] && path[i] != '\n')
-				return (basic_error("Invalid character after texture path\n", 1));
-		}
-		context->map.textures[face].addr = mlx_xpm_file_to_image(
-			context->mlx, path,
-			&context->map.textures[face].width, &context->map.textures[face].height);
-		if (!context->map.textures[face].addr)
-			return (basic_error("Failed to load texture\n", 1));
-		context->map.textures[face].pixels = mlx_get_data_addr(
-			context->map.textures[face].addr,
-			&context->map.textures[face].bpp,
-			&context->map.textures[face].line_len,
-			&context->map.textures[face].endian);
-		return (0);
-	}
+		return (init_texture(context, face, path));
 	if (parse_color(path,
-			(int *[2]){&context->map.ceil_color, &context->map.ground_color}[face == GROUND]))
+			(int *[2]){&context->map.ceil_color,
+			&context->map.ground_color}[face == GROUND]))
 		return (basic_error("Failed to parse color\n", 1));
 	return (0);
 }
 
 static void	destroy_textures(t_context *context)
 {
-	for (int i = 0; i < 4; i++)
+	int	i;
+
+	i = 0;
+	while (i < 4)
+	{
 		if (context->map.textures[i].addr)
 			mlx_destroy_image(context->mlx, context->map.textures[i].addr);
+		i++;
+	}
+}
+
+static int	init_parse_textures_initialisation(
+	t_context *context, int fd, char **line, char *step)
+{
+	int	i;
+
+	*step = 0;
+	*line = get_next_line(fd);
+	if (!*line)
+		return (basic_error("Empty file\n", 1));
+	i = 0;
+	while (i < 4)
+	{
+		context->map.textures[i].addr = NULL;
+		i++;
+	}
+	return (0);
+}
+
+static int	parse_texture_init(
+	t_context *context, int fd, char **line, char *step)
+{
+	int			face;
+
+	face = get_face(*line);
+	if (face == -2)
+		return (free(*line), basic_error("Invalid texture\n", 1));
+	if (face >= 0)
+	{
+		if (context->map.texture_initialisation_steps[face])
+			return (free(*line),
+				basic_error("Multiple textures for the same face\n", 1));
+		context->map.texture_initialisation_steps[face] = 1;
+		if (init_texture_and_color(
+				context, face, (*line) + 2 + pass_spaces(*line)))
+			return (free(*line), basic_error("Failed to init texture\n", 1));
+		(*step)++;
+		if (*step == 6)
+			return (-1);
+	}
+	free(*line);
+	*line = get_next_line(fd);
+	return (0);
 }
 
 int	parse_textures_init(t_context *context, int fd)
 {
-	char	*const steps = (char [6]){0, 0, 0, 0, 0, 0};
-	char	*line;
-	char	step;
-	int		face;
+	char		*line;
+	char		step;
+	int			ret;
 
-	step = 0;
-	line = get_next_line(fd);
-	if (!line)
-		return (basic_error("Empty file\n", 1));
-	for (int i = 0; i < 4; i++)
-		context->map.textures[i].addr = NULL;
+	context->map.texture_initialisation_steps = (char [6]){0};
+	if (init_parse_textures_initialisation(context, fd, &line, &step))
+		return (1);
 	while (line && get_first_char(line) != '1' && get_first_char(line) != '0')
 	{
-		face = get_face(line);
-		if (face >= 0)
-		{
-			if (steps[face])
-				return (free(line), basic_error("Multiple textures for the same face\n", 1));
-			steps[face] = 1;
-			if (init_texture_and_color(context, face, line + 2 + pass_spaces(line)))
-				return (free(line), basic_error("Failed to init texture\n", 1));
-			step++;
-			if (step == 6)
-				break ;
-		}
-		free(line);
-		line = get_next_line(fd);
+		ret = parse_texture_init(context, fd, &line, &step);
+		if (ret == 1)
+			return (1);
+		else if (ret == -1)
+			break ;
 	}
 	if (line)
 		free(line);
@@ -198,7 +243,7 @@ void	init_player(t_map *map, char c, t_vec2 pos)
 	map->has_player = 1;
 }
 
-static void destroy_raw_grid(t_vector *raw_grid)
+static void	destroy_raw_grid(t_vector *raw_grid)
 {
 	int	i;
 
@@ -352,7 +397,7 @@ static int	init_map_grid(t_vector raw_grid, t_map *map)
 	return (0);
 }
 
-static int transform_raw_grid(t_vector raw_grid, t_map *map)
+static int	transform_raw_grid(t_vector raw_grid, t_map *map)
 {
 	if (!raw_grid.tab)
 		return (destroy_raw_grid(&raw_grid),
@@ -375,7 +420,8 @@ static int transform_raw_grid(t_vector raw_grid, t_map *map)
 
 static int	check_map_closure_rec(t_map *map, int *grid, int pos[2])
 {
-	if (pos[0] < 0 || pos[0] >= map->width || pos[1] < 0 || pos[1] >= map->height)
+	if (pos[0] < 0 || pos[0] >= map->width
+		|| pos[1] < 0 || pos[1] >= map->height)
 		return (1);
 	if (grid[pos[1] * map->width + pos[0]])
 		return (0);
@@ -411,7 +457,7 @@ static int	check_map_closure(t_map *map)
 
 int	init_map(t_context *context, char *path)
 {
-	int			fd;
+	int	fd;
 
 	context->map.has_player = 0;
 	if (ft_strlen(path) < 4 || ft_strcmp(path + ft_strlen(path) - 4, ".cub"))
@@ -420,9 +466,11 @@ int	init_map(t_context *context, char *path)
 	if (fd == -1)
 		return (basic_error("Failed to open file\n", 1));
 	if (parse_textures_init(context, fd))
-		return (destroy_textures(context), gnl_close(fd), basic_error("Failed to initialise textures and colors\n", 1));
+		return (destroy_textures(context), gnl_close(fd),
+			basic_error("Failed to initialise textures and colors\n", 1));
 	if (transform_raw_grid(get_raw_grid(fd), &context->map))
-		return (destroy_textures(context), basic_error("Map initialisation Error\n", 1));
+		return (destroy_textures(context),
+			basic_error("Map initialisation Error\n", 1));
 	if (!context->map.has_player)
 		return (destroy_textures(context),
 			destroy_init_map_grid(context->map.grid, context->map.height - 1),

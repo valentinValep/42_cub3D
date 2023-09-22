@@ -1,0 +1,10 @@
+NO ./textures/N_wall.xpm
+SO ./textures/S_wall.xpm
+test ko
+WE ./textures/W_wall.xpm
+EA ./textures/E_wall.xpm
+C 178,255,255
+F 52,140,49
+ 1
+1E1
+ 1
