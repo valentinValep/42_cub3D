@@ -28,8 +28,10 @@ DEPS := ${OBJ:.o=.d}
 
 RM := rm -f
 
-$(NAME) : $(OBJ) $(LIBRARIES_DIR)libft/libft.a $(LIBRARIES_DIR)minilibx/libmlx.a
+$(NAME): $(OBJ) $(LIBRARIES_DIR)libft/libft.a $(LIBRARIES_DIR)minilibx/libmlx.a
 	$(CC) $(OBJ) $(LIBRARIES) -o $(NAME)
+
+bonus: $(NAME)
 
 $(LIBRARIES_DIR)libft/libft.a:
 	git submodule update --init --recursive
@@ -39,25 +41,26 @@ $(LIBRARIES_DIR)minilibx/libmlx.a:
 	git submodule update --init --recursive
 	make -C $(LIBRARIES_DIR)minilibx
 
-$(BINARIES_DIR) :
+$(BINARIES_DIR):
 	mkdir $(BINARIES_DIR)
 
-$(BINARIES_DIR)%.o : $(SOURCES_DIR)%.c | $(BINARIES_DIR)
+$(BINARIES_DIR)%.o: $(SOURCES_DIR)%.c | $(BINARIES_DIR)
 	$(CC) $(FLAGS) $(INCLUDES) -c $< -o $@
 
-all : $(NAME)
+all: $(NAME)
 
-clean :
+clean:
 	$(RM) $(OBJ)
 	$(RM) $(DEPS)
 	make -C $(LIBRARIES_DIR)libft clean
 	make -C $(LIBRARIES_DIR)minilibx clean
 
-fclean : clean
+fclean: clean
 	$(RM) $(NAME)
 	make -C $(LIBRARIES_DIR)libft fclean
 
-re : fclean all
+re: fclean
+	$(MAKE) all
 
 .PHONY: all clean fclean re
 
