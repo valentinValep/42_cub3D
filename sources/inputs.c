@@ -47,13 +47,12 @@ int	keydown_hook(int keycode, t_context *context)
 	//	context->map.player.rotate = ROTATION_SPEED;
 	return (0);
 }
-#include <stdio.h>
+
 int	keyup_hook(int keycode, t_context *context)
 {
 	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left, XK_Right};
 	int			i;
 
-	printf("keycode: %d\n", keycode);
 	i = 0;
 	while (i < KEY_NUMBER)
 	{
@@ -64,11 +63,9 @@ int	keyup_hook(int keycode, t_context *context)
 	return (0);
 }
 
-#include <stdio.h>
 int	motion_hook(int x, int y, t_context *context)
 {
 	(void)y;
 	context->map.player.rotate = (x - WIN_WIDTH / 2) * ROTATION_SPEED / 100;
-	mlx_mouse_move(context->mlx, context->win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
 	return (0);
 }

@@ -28,14 +28,14 @@ t_nearest_wall	find_nearest_wall(t_map *map, t_ray *ray)
 		{
 			wall.x += (ray->dir.x > 0) * 2 - 1;
 			res.perceived_distance = side_dist.x;
-			res.side = WEST * (ray->dir.x < 0) + EAST * (ray->dir.x > 0);;
+			res.side = WEST * (ray->dir.x < 0) + EAST * (ray->dir.x > 0);
 			side_dist.x += delta_dist.x;
 		}
 		else
 		{
 			wall.y += (ray->dir.y > 0) * 2 - 1;
 			res.perceived_distance = side_dist.y;
-			res.side = NORTH * (ray->dir.y < 0) + SOUTH * (ray->dir.y > 0);;
+			res.side = NORTH * (ray->dir.y < 0) + SOUTH * (ray->dir.y > 0);
 			side_dist.y += delta_dist.y;
 		}
 	}

@@ -98,6 +98,7 @@ void	compute_inputs(t_context *context)
 	{
 		rotate_player(context, context->map.player.rotate);
 		context->map.player.rotate = 0;
+		mlx_mouse_move(context->mlx, context->win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
 	}
 }
 
@@ -137,7 +138,8 @@ int	main(int argc, char **argv)
 
 	if (argc != 2)
 		return (basic_error("Usage: ./cub3d <map_path (.cub extension)>\n", 1));
-	if ((ret = init_context(&context, argv)))
+	ret = init_context(&context, argv);
+	if (ret)
 		return (ret);
 	mlx_hook(context.win, KeyPress, KeyPressMask,
 		keydown_hook, &context);
