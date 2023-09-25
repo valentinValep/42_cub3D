@@ -7,7 +7,7 @@ float	invert(float n)
 		return (1e32);
 	return (1 / n);
 }
-#include <stdio.h>
+
 t_nearest_wall	find_nearest_wall(t_map *map, t_ray *ray)
 {
 	t_map_square	wall;
@@ -20,8 +20,10 @@ t_nearest_wall	find_nearest_wall(t_map *map, t_ray *ray)
 	t_nearest_wall	res;
 
 	wall = (t_map_square){(int)ray->pos.x, (int)ray->pos.y};
-	side_dist.x = fabsf((ray->dir.x > 0) - (ray->pos.x - wall.x)) * delta_dist.x;
-	side_dist.y = fabsf((ray->dir.y > 0) - (ray->pos.y - wall.y)) * delta_dist.y;
+	side_dist.x = fabsf((ray->dir.x > 0)
+			- (ray->pos.x - wall.x)) * delta_dist.x;
+	side_dist.y = fabsf((ray->dir.y > 0)
+			- (ray->pos.y - wall.y)) * delta_dist.y;
 	while (get_map_char(map, wall.x, wall.y) != '1')
 	{
 		if (side_dist.x < side_dist.y)
@@ -49,9 +51,11 @@ int	get_wall_pixel(t_context *context, float wall_row, t_nearest_wall nearest_wa
 	int		tex_y;
 
 	if (nearest_wall.side == NORTH || nearest_wall.side == SOUTH)
-		wall_x = context->map.player.pos.x + nearest_wall.perceived_distance * ray->dir.x;
+		wall_x = context->map.player.pos.x
+			+ nearest_wall.perceived_distance * ray->dir.x;
 	else
-		wall_x = context->map.player.pos.y + nearest_wall.perceived_distance * ray->dir.y;
+		wall_x = context->map.player.pos.y
+			+ nearest_wall.perceived_distance * ray->dir.y;
 	wall_x -= floor(wall_x);
 	tex_x = wall_x * context->map.textures[nearest_wall.side].width;
 	if (nearest_wall.side == SOUTH || nearest_wall.side == WEST)
@@ -66,15 +70,21 @@ void	render_wall(t_context *context, int col, t_nearest_wall nearest_wall, t_ray
 	const float		line_height = WIN_HEIGHT / nearest_wall.perceived_distance;
 	const int		draw_start = -line_height / 2 + WIN_HEIGHT / 2;
 	const int		draw_end = line_height / 2 + WIN_HEIGHT / 2;
+	int				row;
 
-	for (int row = 0; row < WIN_HEIGHT; row++)
+	row = 0;
+	while (row < WIN_HEIGHT)
 	{
 		if (row < draw_start)
 			set_img_pixel(&context->img, col, row, context->map.ceil_color);
 		else if (row < draw_end)
-			set_img_pixel(&context->img, col, row, get_wall_pixel(context, (row - draw_start) / (float)(draw_end - draw_start), nearest_wall, ray));
+			set_img_pixel(&context->img, col, row,
+				get_wall_pixel(context,
+					(row - draw_start) / (float)(draw_end - draw_start),
+					nearest_wall, ray));
 		else
 			set_img_pixel(&context->img, col, row, context->map.ground_color);
+		row++;
 	}
 }
 
@@ -94,8 +104,14 @@ void	ray_caster(t_context *context, int col)
 
 void	render_main_scene(t_context *context)
 {
-	for (int col = 0; col < WIN_WIDTH; col++)
+	int	col;
+
+	col = 0;
+	while (col < WIN_WIDTH)
+	{
 		ray_caster(context, col);
+		col++;
+	}
 }
 
 void	render(t_context *context)
