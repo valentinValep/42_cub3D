@@ -7,7 +7,6 @@
 # define WIN_WIDTH 800
 # define WIN_HEIGHT 600
 # define WIN_TITLE "Cub3D"
-# define WALL_HEIGHT 64
 // @TODO use enum
 # define NORTH 0
 # define SOUTH 1
@@ -17,15 +16,17 @@
 # define CEIL 4
 # define GROUND 5
 
-# define KEY_NUMBER 6
+# define KEY_NUMBER 8
 # define KEY_W 0
 # define KEY_S 1
 # define KEY_A 2
 # define KEY_D 3
 # define KEY_LEFT 4
 # define KEY_RIGHT 5
+# define KEY_SHIFT_L 6
 
 # define SPEED 0.03
+# define RUNNING_SPEED_MODIFIER 5
 # define ROTATION_SPEED 0.2
 
 typedef struct s_img {
@@ -85,6 +86,7 @@ typedef struct s_context {
 	t_img	img;
 	t_map	map;
 	char	inputs[KEY_NUMBER];
+	char	render_minimap;
 }	t_context;
 
 // errors.c
@@ -106,7 +108,7 @@ char	get_map_char(t_map *map, int x, int y);
 void	set_map_char(t_map *map, int x, int y, char c);
 
 // rendering[*].c
-void	render(t_context *context);
+void	render_main_scene(t_context *context);
 void	render_minimap(t_context *context);
 
 #endif

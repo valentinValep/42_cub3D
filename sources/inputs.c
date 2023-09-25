@@ -9,7 +9,7 @@ int	destroy_hook(t_context *context)
 
 int	keydown_hook(int keycode, t_context *context)
 {
-	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left, XK_Right};
+	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left, XK_Right, XK_Shift_L};
 	int			i;
 
 	if (keycode == XK_Escape)
@@ -21,6 +21,8 @@ int	keydown_hook(int keycode, t_context *context)
 			context->inputs[i] = 1;
 		i++;
 	}
+	if (keycode == XK_m)
+		context->render_minimap = !context->render_minimap;
 	//if (keycode == XK_w)
 	//{
 	//	context->map.player.speed.x = context->map.player.dir.x * SPEED;
@@ -50,7 +52,7 @@ int	keydown_hook(int keycode, t_context *context)
 
 int	keyup_hook(int keycode, t_context *context)
 {
-	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left, XK_Right};
+	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left, XK_Right, XK_Shift_L};
 	int			i;
 
 	i = 0;

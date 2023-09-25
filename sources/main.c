@@ -29,6 +29,7 @@ int	init_context(t_context *context, char **argv)
 	mlx_mouse_move(context->mlx, context->win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
 	for (int i = 0; i < KEY_NUMBER; i++)
 		context->inputs[i] = 0;
+	context->render_minimap = 0;
 	return (0);
 }
 
@@ -49,25 +50,28 @@ void	rotate_player(t_context *context, float angle)
 
 void	compute_key_pressed(t_context *context)
 {
+	const float	speed = SPEED * !(context->inputs[KEY_SHIFT_L])
+		+ SPEED * context->inputs[KEY_SHIFT_L] * RUNNING_SPEED_MODIFIER;
+
 	if (context->inputs[KEY_W])
 	{
-		context->map.player.speed.x = context->map.player.dir.x * SPEED;
-		context->map.player.speed.y = context->map.player.dir.y * SPEED;
+		context->map.player.speed.x = context->map.player.dir.x * speed;
+		context->map.player.speed.y = context->map.player.dir.y * speed;
 	}
 	if (context->inputs[KEY_S])
 	{
-		context->map.player.speed.x = -context->map.player.dir.x * SPEED;
-		context->map.player.speed.y = -context->map.player.dir.y * SPEED;
+		context->map.player.speed.x = -context->map.player.dir.x * speed;
+		context->map.player.speed.y = -context->map.player.dir.y * speed;
 	}
 	if (context->inputs[KEY_A])
 	{
-		context->map.player.speed.x = -context->map.player.plane.x * SPEED;
-		context->map.player.speed.y = -context->map.player.plane.y * SPEED;
+		context->map.player.speed.x = -context->map.player.plane.x * speed;
+		context->map.player.speed.y = -context->map.player.plane.y * speed;
 	}
 	if (context->inputs[KEY_D])
 	{
-		context->map.player.speed.x = context->map.player.plane.x * SPEED;
-		context->map.player.speed.y = context->map.player.plane.y * SPEED;
+		context->map.player.speed.x = context->map.player.plane.x * speed;
+		context->map.player.speed.y = context->map.player.plane.y * speed;
 	}
 	if (context->inputs[KEY_LEFT])
 		context->map.player.rotate = -ROTATION_SPEED / 10;
@@ -80,17 +84,17 @@ void	compute_inputs(t_context *context)
 	compute_key_pressed(context);
 	if (context->map.player.speed.x != 0)
 	{
-		if (get_map_char(&context->map,
-				context->map.player.pos.x + context->map.player.speed.x,
-				context->map.player.pos.y) != '1')
+		//if (get_map_char(&context->map,
+		//		context->map.player.pos.x + context->map.player.speed.x,
+		//		context->map.player.pos.y) != '1')
 			context->map.player.pos.x += context->map.player.speed.x;
 		context->map.player.speed.x = 0;
 	}
 	if (context->map.player.speed.y != 0)
 	{
-		if (get_map_char(&context->map,
-				context->map.player.pos.x,
-				context->map.player.pos.y + context->map.player.speed.y) != '1')
+		//if (get_map_char(&context->map,
+		//		context->map.player.pos.x,
+		//		context->map.player.pos.y + context->map.player.speed.y) != '1')
 			context->map.player.pos.y += context->map.player.speed.y;
 		context->map.player.speed.y = 0;
 	}
@@ -126,7 +130,9 @@ int	loop_hook(t_context *context)
 {
 	(void)context;
 	compute_inputs(context);
-	render(context);
+	render_main_scene(context);
+	if (context->render_minimap)
+		render_minimap(context);
 	update(context);
 	return (0);
 }

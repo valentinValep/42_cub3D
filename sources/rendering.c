@@ -24,6 +24,7 @@ t_nearest_wall	find_nearest_wall(t_map *map, t_ray *ray)
 			- (ray->pos.x - wall.x)) * delta_dist.x;
 	side_dist.y = fabsf((ray->dir.y > 0)
 			- (ray->pos.y - wall.y)) * delta_dist.y;
+	res.perceived_distance = 0;
 	while (get_map_char(map, wall.x, wall.y) != '1')
 	{
 		if (side_dist.x < side_dist.y)
@@ -65,6 +66,20 @@ int	get_wall_pixel(t_context *context, float wall_row, t_nearest_wall nearest_wa
 			tex_x, tex_y));
 }
 
+void	draw_black(t_context *context, int col)
+{
+	int	row;
+
+	row = 0;
+	while (row < WIN_HEIGHT)
+	{
+		//if (get_img_pixel(&context->img, col, row) != 0x0000FF)
+		set_img_pixel(&context->img, col, row, 0x000000);
+		row++;
+	}
+}
+
+#include <stdio.h>
 void	render_wall(t_context *context, int col, t_nearest_wall nearest_wall, t_ray *ray)
 {
 	const float		line_height = WIN_HEIGHT / nearest_wall.perceived_distance;
@@ -73,6 +88,8 @@ void	render_wall(t_context *context, int col, t_nearest_wall nearest_wall, t_ray
 	int				row;
 
 	row = 0;
+	if (!nearest_wall.perceived_distance)
+		return ((void) draw_black(context, col));
 	while (row < WIN_HEIGHT)
 	{
 		if (row < draw_start)
@@ -112,10 +129,4 @@ void	render_main_scene(t_context *context)
 		ray_caster(context, col);
 		col++;
 	}
-}
-
-void	render(t_context *context)
-{
-	render_main_scene(context);
-	render_minimap(context);
 }

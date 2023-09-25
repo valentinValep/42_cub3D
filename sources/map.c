@@ -355,7 +355,7 @@ static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
 	i = -1;
 	while (++i < map->width)
 	{
-		dest[i] = '0';
+		dest[i] = ' ';
 		if (end)
 			continue ;
 		if (src[i] == 'N' || src[i] == 'S'
@@ -369,7 +369,9 @@ static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
 			dest[i] = '1';
 		else if (!src[i])
 			end = 1;
-		else if (!(is_whitespace_no_newline(src[i]) || src[i] == '0'))
+		else if (src[i] == '0')
+			dest[i] = '0';
+		else if (!is_whitespace_no_newline(src[i]))
 			return (basic_error("Invalid character in map\n", 1));
 	}
 	return (0);
@@ -486,7 +488,7 @@ char	get_map_char(t_map *map, int x, int y)
 {
 	if (x < 0 || x >= map->width || y < 0 || y >= map->height)
 	{
-		printf("Get map char error : x: %d, y: %d\n", x, y);
+		//printf("Get map char error : x: %d, y: %d\n", x, y);
 		return ('1');
 	}
 	return ((map->grid[y])[x]);
