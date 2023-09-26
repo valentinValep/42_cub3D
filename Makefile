@@ -17,7 +17,7 @@ LIBRARIES := -L$(LIBRARIES_DIR)minilibx -lmlx -L/usr/lib -lXext -lX11 -lm -lz -L
 OBJ := main.o \
 	errors.o \
 	map.o \
-	rendering2.o \
+	rendering.o \
 	rendering_minimap.o \
 	images.o \
 	inputs.o \
