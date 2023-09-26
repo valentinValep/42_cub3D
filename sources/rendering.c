@@ -29,7 +29,7 @@ t_nearest_wall	find_nearest_wall(t_map *map, t_ray *ray)
 	{
 		if (side_dist.x < side_dist.y)
 		{
-			wall.x += (ray->dir.x > 0) * 2 - 1;
+			wall.x += (ray->dir.x > 0) * 2 - 1; // if (ray->dir.x > 0) wall.x += 1; else wall.x -= 1;
 			res.perceived_distance = side_dist.x;
 			res.side = WEST * (ray->dir.x < 0) + EAST * (ray->dir.x > 0);
 			side_dist.x += delta_dist.x;

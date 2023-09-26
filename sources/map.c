@@ -364,6 +364,7 @@ static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
 			if (map->has_player)
 				return (basic_error("Multiple player\n", 1));
 			init_player(map, src[i], (t_vec2){i, y});
+			dest[i] = '0';
 		}
 		else if (src[i] == '1')
 			dest[i] = '1';
@@ -425,6 +426,8 @@ static int	check_map_closure_rec(t_map *map, int *grid, int pos[2])
 	if (pos[0] < 0 || pos[0] >= map->width
 		|| pos[1] < 0 || pos[1] >= map->height)
 		return (1);
+	if (is_whitespace_no_newline(get_map_char(map, pos[0], pos[1])))
+		return (basic_error("Void detect in map\n", 1));
 	if (grid[pos[1] * map->width + pos[0]])
 		return (0);
 	grid[pos[1] * map->width + pos[0]] = 1;
@@ -436,9 +439,7 @@ static int	check_map_closure_rec(t_map *map, int *grid, int pos[2])
 		return (1);
 	if (check_map_closure_rec(map, grid, (int [2]){pos[0], pos[1] + 1}))
 		return (1);
-	if (check_map_closure_rec(map, grid, (int [2]){pos[0], pos[1] - 1}))
-		return (1);
-	return (0);
+	return (check_map_closure_rec(map, grid, (int [2]){pos[0], pos[1] - 1}));
 }
 
 static int	check_map_closure(t_map *map)
