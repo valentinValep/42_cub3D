@@ -239,7 +239,7 @@ void	init_player(t_map *map, char c, t_vec2 pos)
 	map->player.speed = (t_vec2){0., 0.};
 	map->player.rotate = 0.;
 	map->player.dir = get_dir_from_char(c);
-	map->player.plane = (t_vec2){-map->player.dir.y, map->player.dir.x};
+	map->player.plane = (t_vec2){-map->player.dir.y * 2, map->player.dir.x * 2};
 	map->has_player = 1;
 }
 
