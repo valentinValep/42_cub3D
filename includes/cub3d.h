@@ -16,7 +16,7 @@
 # define CEIL 4
 # define GROUND 5
 
-# define KEY_NUMBER 8
+# define KEY_NUMBER 7
 # define KEY_W 0
 # define KEY_S 1
 # define KEY_A 2
