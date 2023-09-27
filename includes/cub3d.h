@@ -25,7 +25,7 @@
 # define KEY_RIGHT 5
 # define KEY_SHIFT_L 6
 
-# define SPEED 0.002
+# define SPEED 0.02
 # define RUNNING_SPEED_MODIFIER 5
 # define ROTATION_SPEED 0.2
 
@@ -65,6 +65,7 @@ typedef struct s_ray {
 typedef struct s_nearest_wall {
 	float	perceived_distance;
 	int		side;
+	int		wall[2];
 }	t_nearest_wall;
 
 typedef struct s_map {

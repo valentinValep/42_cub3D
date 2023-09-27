@@ -355,7 +355,7 @@ static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
 	i = -1;
 	while (++i < map->width)
 	{
-		dest[i] = ' ';
+		dest[i] = '1';
 		if (end)
 			continue ;
 		if (src[i] == 'N' || src[i] == 'S'
