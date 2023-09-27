@@ -14,16 +14,16 @@ t_nearest_wall	cast_ray(t_context *context, t_ray ray)
 	};
 
 	wall = (int [2]){ray.pos.x, ray.pos.y};
-	//side_dist.x = sqrtf(powf((ray.pos.x - wall[0]) / ray.dir.x * ray.dir.y, 2) + powf((ray.pos.x - wall[0]), 2));
-	//side_dist.y = sqrtf(powf((ray.pos.y - wall[1]) / ray.dir.y * ray.dir.x, 2) + powf((ray.pos.y - wall[1]), 2));
-	if (ray.dir.x < 0)
-		side_dist.x = (ray.pos.x - wall[0]) * delta[0];
-	else
-		side_dist.x = (wall[0] + 1.0 - ray.pos.x) * delta[0];
-	if (ray.dir.y < 0)
-		side_dist.y = (ray.pos.y - wall[1]) * delta[1];
-	else
-		side_dist.y = (wall[1] + 1.0 - ray.pos.y) * delta[1];
+	side_dist.x = sqrtf(powf((ray.pos.x - wall[0]) / ray.dir.x * ray.dir.y, 2) + powf((ray.pos.x - wall[0]), 2));
+	side_dist.y = sqrtf(powf((ray.pos.y - wall[1]) / ray.dir.y * ray.dir.x, 2) + powf((ray.pos.y - wall[1]), 2));
+	//if (ray.dir.x < 0)
+	//	side_dist.x = (ray.pos.x - wall[0]) * delta[0];
+	//else
+	//	side_dist.x = (wall[0] + 1.0 - ray.pos.x) * delta[0];
+	//if (ray.dir.y < 0)
+	//	side_dist.y = (ray.pos.y - wall[1]) * delta[1];
+	//else
+	//	side_dist.y = (wall[1] + 1.0 - ray.pos.y) * delta[1];
 	res.perceived_distance = 0;
 	while (get_map_char(&context->map, wall[0], wall[1]) != '1')
 	{
@@ -45,25 +45,34 @@ t_nearest_wall	cast_ray(t_context *context, t_ray ray)
 	return (res);
 }
 
-void	draw_col(t_context *context, t_nearest_wall wall, int col)
+int	get_wall_pixel_color(t_context *context, t_nearest_wall wall, t_ray ray, int wall_height, int wall_start)
+{
+	//
+}
+
+void	draw_col(t_context *context, t_nearest_wall wall, t_ray ray, int col)
 {
 	int			i;
-	int	wall_height = 1 / wall.perceived_distance * 50;
+	int			wall_height;
+	int			wall_start;
 
 	if (col == 0 || col == 400)
 		printf("col %d: %f\n", col, wall.perceived_distance);
 	(void) context;
 	if (!wall.perceived_distance)
 		wall_height = WIN_HEIGHT;
+	else
+		wall_height = 1 / wall.perceived_distance * 50;
 	i = 0;
-	while (i < (WIN_HEIGHT - wall_height) / 2)
+	wall_start = (WIN_HEIGHT - wall_height) / 2;
+	while (i < wall_start)
 	{
 		set_img_pixel(&context->img, col, i, context->map.ceil_color);
 		i++;
 	}
-	while (i < wall_height + (WIN_HEIGHT - wall_height) / 2)
+	while (i < wall_height + wall_start)
 	{
-		set_img_pixel(&context->img, col, i, 0x000000);
+		set_img_pixel(&context->img, col, i, get_wall_pixel_color(context, wall, ray, wall_height, wall_start));
 		i++;
 	}
 	while (i < WIN_HEIGHT)
@@ -87,7 +96,7 @@ void	raycaster(t_context *context, int col)
 		- context->map.player.plane.y / 2
 	};
 	nearest_wall = cast_ray(context, ray);
-	draw_col(context, nearest_wall, col);
+	draw_col(context, nearest_wall, ray, col);
 }
 
 void	render_main_scene(t_context *context)
