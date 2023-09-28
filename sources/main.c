@@ -7,6 +7,7 @@
 int	init_context(t_context *context, char **argv)
 {
 	int	ret;
+	int	screen_size[2];
 
 	context->mlx = mlx_init(); // @TODO check if mlx_init() failed
 	if ((ret = init_map(context, argv[1])))
@@ -16,17 +17,20 @@ int	init_context(t_context *context, char **argv)
 		return (ret);
 	}
 	mlx_do_key_autorepeatoff(context->mlx);
+	mlx_get_screen_size(context->mlx, screen_size, screen_size + 1);
+	context->win_width = screen_size[0] * WIN_SIZE_PROPORTION;
+	context->win_height = screen_size[1] * WIN_SIZE_PROPORTION;
 	context->win = mlx_new_window(
-		context->mlx, WIN_WIDTH, WIN_HEIGHT, WIN_TITLE); // @TODO check if mlx_new_window() failed
+		context->mlx, context->win_width, context->win_height, WIN_TITLE); // @TODO check if mlx_new_window() failed
 	context->img.addr = mlx_new_image(
-		context->mlx, WIN_WIDTH, WIN_HEIGHT); // @TODO check if mlx_new_image() failed
+		context->mlx, context->win_width, context->win_height); // @TODO check if mlx_new_image() failed
 	context->img.pixels = mlx_get_data_addr(
 		context->img.addr, &context->img.bpp,
 		&context->img.line_len, &context->img.endian);
-	context->img.width = WIN_WIDTH;
-	context->img.height = WIN_HEIGHT;
+	context->img.width = context->win_width;
+	context->img.height = context->win_height;
 	mlx_mouse_hide(context->mlx, context->win);
-	mlx_mouse_move(context->mlx, context->win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
+	mlx_mouse_move(context->mlx, context->win, context->win_width / 2, context->win_height / 2);
 	for (int i = 0; i < KEY_NUMBER; i++)
 		context->inputs[i] = 0;
 	context->render_minimap = 0;
@@ -102,7 +106,8 @@ void	compute_inputs(t_context *context)
 	{
 		rotate_player(context, context->map.player.rotate);
 		context->map.player.rotate = 0;
-		mlx_mouse_move(context->mlx, context->win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
+		mlx_mouse_move(context->mlx, context->win,
+			context->win_width / 2, context->win_height / 2);
 	}
 }
 
@@ -156,6 +161,7 @@ int	main(int argc, char **argv)
 	mlx_hook(context.win, MotionNotify, PointerMotionMask,
 		motion_hook, &context);
 	mlx_loop_hook(context.mlx, loop_hook, &context);
-	//mlx_loop(context.mlx);
+	mlx_loop(context.mlx);
+	mlx_do_key_autorepeaton(context.mlx);
 	destroy_context(&context);
 }

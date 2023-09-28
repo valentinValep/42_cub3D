@@ -4,8 +4,7 @@
 # include "mlx.h"
 # include "libft.h"
 
-# define WIN_WIDTH 800
-# define WIN_HEIGHT 600
+# define WIN_SIZE_PROPORTION 0.9
 # define WIN_TITLE "Cub3D"
 # define WALL_HEIGHT 400
 // @TODO use enum
@@ -79,6 +78,8 @@ typedef struct s_context {
 	void	*mlx;
 	void	*win;
 	t_img	img;
+	int		win_width;
+	int		win_height;
 	t_map	map;
 	char	inputs[KEY_NUMBER];
 	char	render_minimap;

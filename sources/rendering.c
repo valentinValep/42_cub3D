@@ -62,7 +62,7 @@ void	draw_black_col(t_context *context, int col)
 	int	i;
 
 	i = 0;
-	while (i < WIN_HEIGHT)
+	while (i < context->win_height)
 	{
 		set_img_pixel(&context->img, col, i, 0);
 		i++;
@@ -73,12 +73,12 @@ void	draw_col(t_context *context, t_nearest_wall wall, t_ray ray, int col)
 {
 	int			row;
 	const int	line_height = 1 / wall.perceived_distance * WALL_HEIGHT;
-	const int	line_start = (WIN_HEIGHT - line_height) / 2;
+	const int	line_start = (context->win_height - line_height) / 2;
 
 	if (!wall.perceived_distance)
 		return ((void) draw_black_col(context, col));
 	row = 0;
-	while (row < WIN_HEIGHT)
+	while (row < context->win_height)
 	{
 		if (row < line_start)
 			set_img_pixel(&context->img, col, row, context->map.ceil_color);
@@ -89,7 +89,7 @@ void	draw_col(t_context *context, t_nearest_wall wall, t_ray ray, int col)
 					* context->map.textures[wall.side].width,
 					((row - line_start) / (float) line_height)
 					* context->map.textures[wall.side].height));
-		else if (row < WIN_HEIGHT)
+		else if (row < context->win_height)
 			set_img_pixel(&context->img, col, row, context->map.ground_color);
 		row++;
 	}
@@ -102,10 +102,10 @@ void	raycaster(t_context *context, int col)
 
 	ray.pos = context->map.player.pos;
 	ray.dir = (t_vec2){context->map.player.dir.x
-		+ ((float)col / WIN_WIDTH * context->map.player.plane.x)
+		+ ((float)col / context->win_width * context->map.player.plane.x)
 		- context->map.player.plane.x / 2,
 		context->map.player.dir.y
-		+ ((float)col / WIN_WIDTH * context->map.player.plane.y)
+		+ ((float)col / context->win_width * context->map.player.plane.y)
 		- context->map.player.plane.y / 2
 	};
 	nearest_wall = cast_ray(context, ray);
@@ -117,7 +117,7 @@ void	render_main_scene(t_context *context)
 	int	col;
 
 	col = 0;
-	while (col < WIN_WIDTH)
+	while (col < context->win_width)
 	{
 		raycaster(context, col);
 		col++;

@@ -68,6 +68,7 @@ int	keyup_hook(int keycode, t_context *context)
 int	motion_hook(int x, int y, t_context *context)
 {
 	(void)y;
-	context->map.player.rotate = (x - WIN_WIDTH / 2) * ROTATION_SPEED / 100;
+	context->map.player.rotate
+		= (x - context->win_width / 2) * ROTATION_SPEED / 100;
 	return (0);
 }

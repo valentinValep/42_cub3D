@@ -1,12 +1,10 @@
 # Cub3D
 
 ## TODO
-- map initialisation
-	- handle space in map as error
-- Dynamic window size at game launch
+- parsing
+	- error on '0' char outside of the map not closed ?
 - rendering
 	- minimap
-	- (main scene)
 - inputs
 	- diagonals moves
 - Collision box
