@@ -156,6 +156,6 @@ int	main(int argc, char **argv)
 	mlx_hook(context.win, MotionNotify, PointerMotionMask,
 		motion_hook, &context);
 	mlx_loop_hook(context.mlx, loop_hook, &context);
-	mlx_loop(context.mlx);
+	//mlx_loop(context.mlx);
 	destroy_context(&context);
 }

@@ -355,7 +355,7 @@ static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
 	i = -1;
 	while (++i < map->width)
 	{
-		dest[i] = '1';
+		dest[i] = ' ';
 		if (end)
 			continue ;
 		if (src[i] == 'N' || src[i] == 'S'
@@ -492,6 +492,8 @@ char	get_map_char(t_map *map, int x, int y)
 		//printf("Get map char error : x: %d, y: %d\n", x, y);
 		return ('1');
 	}
+	if (is_whitespace((map->grid[y])[x]))
+		return ('1');
 	return ((map->grid[y])[x]);
 }
 
