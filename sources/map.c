@@ -14,7 +14,7 @@ int	get_face(char *line)
 	int			face;
 
 	i = 0;
-	while (line[i] && is_whitespace_no_newline(line[i])) // @TODO verif
+	while (line[i] && is_whitespace_no_newline(line[i])) // @TODO let ?
 		i++;
 	if (!line[i] || !line[i + 1] || !line[i + 2]
 		|| ((line[i] != 'N' || line[i + 1] != 'O'
