@@ -30,13 +30,12 @@ void	render_minimap(t_context *context)
 			for (int k = 0; k < MAP_SCALE; k++)
 				for (int l = 0; l < MAP_SCALE; l++)
 				{
-					c = get_map_char(&context->map, x, y);
-					if (c != ' ')
-						set_img_pixel(
-							&context->img,
-							x * MAP_SCALE + k + WIN_WIDTH - context->map.width * MAP_SCALE,
-							y * MAP_SCALE + l,
-							c == '1' ? 0xFF0000 : 0xFFFFFF);
+					c = is_wall_map(&context->map, x, y);
+					set_img_pixel(
+						&context->img,
+						x * MAP_SCALE + k + WIN_WIDTH - context->map.width * MAP_SCALE,
+						y * MAP_SCALE + l,
+						c ? 0xFF0000 : 0xFFFFFF);
 				}
 		}
 	render_player(context);

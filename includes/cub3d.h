@@ -100,6 +100,7 @@ int		get_img_pixel(t_img *img, int x, int y);
 // map.cs
 int		init_map(t_context *context, char *path);
 char	get_map_char(t_map *map, int x, int y);
+int		is_wall_map(t_map *map, int x, int y);
 void	set_map_char(t_map *map, int x, int y, char c);
 
 // rendering[*].c

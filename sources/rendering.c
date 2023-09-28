@@ -18,7 +18,7 @@ t_nearest_wall	cast_ray(t_context *context, t_ray ray)
 	side_dist.y = fabs((ray.dir.y > 0) - (ray.pos.y - wall[1])) * delta[1];
 	res.perceived_distance = 0;
 	res.side = 0;
-	while (get_map_char(&context->map, wall[0], wall[1]) != '1')
+	while (!is_wall_map(&context->map, wall[0], wall[1]))
 	{
 		if (side_dist.x < side_dist.y)
 		{
