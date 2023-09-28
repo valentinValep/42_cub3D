@@ -22,14 +22,14 @@ t_nearest_wall	cast_ray(t_context *context, t_ray ray)
 	{
 		if (side_dist.x < side_dist.y)
 		{
-			wall[0] += 1 * ((ray.dir.x > 0) * 2 - 1);
+			wall[0] += (ray.dir.x > 0) * 2 - 1;
 			res.perceived_distance = side_dist.x;
 			res.side = EAST * (ray.dir.x < 0) + WEST * !(ray.dir.x < 0);
 			side_dist.x += delta[0];
 		}
 		else
 		{
-			wall[1] += 1 * ((ray.dir.y > 0) * 2 - 1);
+			wall[1] += (ray.dir.y > 0) * 2 - 1;
 			res.perceived_distance = side_dist.y;
 			res.side = SOUTH * (ray.dir.y < 0) + NORTH * !(ray.dir.y < 0);
 			side_dist.y += delta[1];
@@ -71,27 +71,27 @@ void	draw_black_col(t_context *context, int col)
 
 void	draw_col(t_context *context, t_nearest_wall wall, t_ray ray, int col)
 {
-	int			i;
-	const int	wall_height = 1 / wall.perceived_distance * 400;
-	const int	wall_start = (WIN_HEIGHT - wall_height) / 2;
+	int			row;
+	const int	line_height = 1 / wall.perceived_distance * WALL_HEIGHT;
+	const int	line_start = (WIN_HEIGHT - line_height) / 2;
 
 	if (!wall.perceived_distance)
 		return ((void) draw_black_col(context, col));
-	i = 0;
-	while (i < WIN_HEIGHT)
+	row = 0;
+	while (row < WIN_HEIGHT)
 	{
-		if (i < wall_start)
-			set_img_pixel(&context->img, col, i, context->map.ceil_color);
-		else if (i < wall_height + wall_start)
-			set_img_pixel(&context->img, col, i,
+		if (row < line_start)
+			set_img_pixel(&context->img, col, row, context->map.ceil_color);
+		else if (row < line_height + line_start)
+			set_img_pixel(&context->img, col, row,
 				get_img_pixel(&context->map.textures[wall.side],
 					get_wall_texture_x(wall, ray)
 					* context->map.textures[wall.side].width,
-					((i - wall_start) / (float) wall_height)
+					((row - line_start) / (float) line_height)
 					* context->map.textures[wall.side].height));
-		else if (i < WIN_HEIGHT)
-			set_img_pixel(&context->img, col, i, context->map.ground_color);
-		i++;
+		else if (row < WIN_HEIGHT)
+			set_img_pixel(&context->img, col, row, context->map.ground_color);
+		row++;
 	}
 }
 

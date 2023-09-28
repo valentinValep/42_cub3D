@@ -7,6 +7,7 @@
 # define WIN_WIDTH 800
 # define WIN_HEIGHT 600
 # define WIN_TITLE "Cub3D"
+# define WALL_HEIGHT 400
 // @TODO use enum
 # define NORTH 0
 # define SOUTH 1
@@ -43,11 +44,6 @@ typedef struct s_vec2 {
 	float	x;
 	float	y;
 }	t_vec2;
-
-typedef struct s_map_square {
-	int	x;
-	int	y;
-}	t_map_square;
 
 typedef struct s_player {
 	t_vec2	pos;
