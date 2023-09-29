@@ -488,17 +488,13 @@ int	init_map(t_context *context, char *path)
 char	get_map_char(t_map *map, int x, int y)
 {
 	if (x < 0 || x >= map->width || y < 0 || y >= map->height)
-	{
-		//printf("Get map char error : x: %d, y: %d\n", x, y);
-		return ('1');
-	}
+		return ('0');
 	return ((map->grid[y])[x]);
 }
 
 int	is_wall_map(t_map *map, int x, int y)
 {
-	return (get_map_char(map, x, y) == '1'
-		|| is_whitespace(get_map_char(map, x, y)));
+	return (get_map_char(map, x, y) == '1');
 }
 
 void	set_map_char(t_map *map, int x, int y, char c)

@@ -12,13 +12,16 @@ t_nearest_wall	cast_ray(t_context *context, t_ray ray)
 		fabs(1 / ray.dir.x),
 		fabs(1 / ray.dir.y)
 	};
+	int				step;
 
-	wall = (int [2]){ray.pos.x, ray.pos.y};
+	step = 0;
+	wall = (int [2]){floorf(ray.pos.x), floorf(ray.pos.y)};
 	side_dist.x = fabs((ray.dir.x > 0) - (ray.pos.x - wall[0])) * delta[0];
 	side_dist.y = fabs((ray.dir.y > 0) - (ray.pos.y - wall[1])) * delta[1];
 	res.perceived_distance = 0;
 	res.side = 0;
-	while (!is_wall_map(&context->map, wall[0], wall[1]))
+	while (!is_wall_map(&context->map, wall[0], wall[1])
+		&& step < RENDER_DISTANCE)
 	{
 		if (side_dist.x < side_dist.y)
 		{
@@ -34,7 +37,10 @@ t_nearest_wall	cast_ray(t_context *context, t_ray ray)
 			res.side = SOUTH * (ray.dir.y < 0) + NORTH * !(ray.dir.y < 0);
 			side_dist.y += delta[1];
 		}
+		step++;
 	}
+	if (step == RENDER_DISTANCE)
+		res.perceived_distance = INFINITY;
 	return (res);
 }
 
