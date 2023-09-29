@@ -1,8 +1,6 @@
 # Cub3D
 
 ## TODO
-- parsing
-	- error on '0' char outside of the map not closed ?
 - rendering
 	- minimap
 - inputs

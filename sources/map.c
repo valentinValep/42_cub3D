@@ -421,40 +421,32 @@ static int	transform_raw_grid(t_vector raw_grid, t_map *map)
 	return (0);
 }
 
-static int	check_map_closure_rec(t_map *map, int *grid, int pos[2])
-{
-	if (pos[0] < 0 || pos[0] >= map->width
-		|| pos[1] < 0 || pos[1] >= map->height)
-		return (1);
-	if (is_whitespace_no_newline(get_map_char(map, pos[0], pos[1])))
-		return (basic_error("Void detect in map\n", 1));
-	if (grid[pos[1] * map->width + pos[0]])
-		return (0);
-	grid[pos[1] * map->width + pos[0]] = 1;
-	if (get_map_char(map, pos[0], pos[1]) == '1')
-		return (0);
-	if (check_map_closure_rec(map, grid, (int [2]){pos[0] + 1, pos[1]}))
-		return (1);
-	if (check_map_closure_rec(map, grid, (int [2]){pos[0] - 1, pos[1]}))
-		return (1);
-	if (check_map_closure_rec(map, grid, (int [2]){pos[0], pos[1] + 1}))
-		return (1);
-	return (check_map_closure_rec(map, grid, (int [2]){pos[0], pos[1] - 1}));
-}
-
 static int	check_map_closure(t_map *map)
 {
-	int *const	grid = ft_calloc(sizeof(int), map->width * map->height);
+	int	i;
+	int	j;
 
-	if (!grid)
-		return (basic_error("Map memory allocation error\n", 1));
-	if (check_map_closure_rec(map, grid,
-			(int [2]){map->player.pos.x, map->player.pos.y}))
+	j = 0;
+	while (j < map->height)
 	{
-		free(grid);
-		return (basic_error("Map is not closed\n", 1));
+		i = 0;
+		while (i < map->width)
+		{
+			if (get_map_char(map, i, j) == '0')
+			{
+				if (is_whitespace_no_newline(get_map_char(map, i + 1, j)))
+					return (basic_error("Map not closed\n", 1));
+				if (is_whitespace_no_newline(get_map_char(map, i - 1, j)))
+					return (basic_error("Map not closed\n", 1));
+				if (is_whitespace_no_newline(get_map_char(map, i, j + 1)))
+					return (basic_error("Map not closed\n", 1));
+				if (is_whitespace_no_newline(get_map_char(map, i, j - 1)))
+					return (basic_error("Map not closed\n", 1));
+			}
+			i++;
+		}
+		j++;
 	}
-	free(grid);
 	return (0);
 }
 
@@ -488,7 +480,7 @@ int	init_map(t_context *context, char *path)
 char	get_map_char(t_map *map, int x, int y)
 {
 	if (x < 0 || x >= map->width || y < 0 || y >= map->height)
-		return ('0');
+		return (' ');
 	return ((map->grid[y])[x]);
 }
 
