@@ -75,15 +75,20 @@ typedef struct s_map {
 	char		*texture_initialisation_steps;
 }	t_map;
 
-typedef struct s_context {
-	void	*mlx;
-	void	*win;
-	t_img	img;
-	int		win_width;
-	int		win_height;
-	t_map	map;
+typedef struct s_inputs_handler {
 	char	inputs[KEY_NUMBER];
 	char	render_minimap;
+	char	active_collisions;
+}	t_inputs_handler;
+
+typedef struct s_context {
+	void				*mlx;
+	void				*win;
+	t_img				img;
+	int					win_width;
+	int					win_height;
+	t_map				map;
+	t_inputs_handler	inputs_handler;
 }	t_context;
 
 // errors.c

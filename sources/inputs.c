@@ -18,11 +18,15 @@ int	keydown_hook(int keycode, t_context *context)
 	while (i < KEY_NUMBER)
 	{
 		if (inputs[i] == keycode)
-			context->inputs[i] = 1;
+			context->inputs_handler.inputs[i] = 1;
 		i++;
 	}
 	if (keycode == XK_m)
-		context->render_minimap = !context->render_minimap;
+		context->inputs_handler.render_minimap
+			= !context->inputs_handler.render_minimap;
+	if (keycode == XK_k)
+		context->inputs_handler.active_collisions
+			= !context->inputs_handler.active_collisions;
 	//if (keycode == XK_w)
 	//{
 	//	context->map.player.speed.x = context->map.player.dir.x * SPEED;
@@ -59,7 +63,7 @@ int	keyup_hook(int keycode, t_context *context)
 	while (i < KEY_NUMBER)
 	{
 		if (inputs[i] == keycode)
-			context->inputs[i] = 0;
+			context->inputs_handler.inputs[i] = 0;
 		i++;
 	}
 	return (0);
