@@ -54,29 +54,21 @@ void	rotate_player(t_context *context, float angle)
 
 void	compute_key_pressed(t_context *context)
 {
-	const float	speed = SPEED * !(context->inputs[KEY_SHIFT_L])
-		+ SPEED * context->inputs[KEY_SHIFT_L] * RUNNING_SPEED_MODIFIER;
+	const float	speed = SPEED * (!(context->inputs[KEY_SHIFT_L])
+			+ context->inputs[KEY_SHIFT_L] * RUNNING_SPEED_MODIFIER);
+	t_vec2		dir;
 
-	if (context->inputs[KEY_W])
+	dir = (t_vec2){!!context->inputs[KEY_A] - !!context->inputs[KEY_D],
+		!!context->inputs[KEY_W] - context->inputs[KEY_S]};
+	if (dir.x != 0 && dir.y != 0)
 	{
-		context->map.player.speed.x = context->map.player.dir.x * speed;
-		context->map.player.speed.y = context->map.player.dir.y * speed;
+		dir.x *= sqrt(2) / 2;
+		dir.y *= sqrt(2) / 2;
 	}
-	if (context->inputs[KEY_S])
-	{
-		context->map.player.speed.x = -context->map.player.dir.x * speed;
-		context->map.player.speed.y = -context->map.player.dir.y * speed;
-	}
-	if (context->inputs[KEY_A])
-	{
-		context->map.player.speed.x = -context->map.player.plane.x * speed;
-		context->map.player.speed.y = -context->map.player.plane.y * speed;
-	}
-	if (context->inputs[KEY_D])
-	{
-		context->map.player.speed.x = context->map.player.plane.x * speed;
-		context->map.player.speed.y = context->map.player.plane.y * speed;
-	}
+	context->map.player.speed.x = context->map.player.dir.x * dir.y * speed
+		+ context->map.player.dir.y * dir.x * speed;
+	context->map.player.speed.y = context->map.player.dir.y * dir.y * speed
+		- context->map.player.dir.x * dir.x * speed;
 	if (context->inputs[KEY_LEFT])
 		context->map.player.rotate = -ROTATION_SPEED / 10;
 	if (context->inputs[KEY_RIGHT])
@@ -161,7 +153,7 @@ int	main(int argc, char **argv)
 	mlx_hook(context.win, MotionNotify, PointerMotionMask,
 		motion_hook, &context);
 	mlx_loop_hook(context.mlx, loop_hook, &context);
-	//mlx_loop(context.mlx);
+	mlx_loop(context.mlx);
 	mlx_do_key_autorepeaton(context.mlx);
 	destroy_context(&context);
 }

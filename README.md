@@ -3,8 +3,6 @@
 ## TODO
 - rendering
 	- minimap
-- inputs
-	- diagonals moves
 - Collision box
 - others
 	- check every mlx return
