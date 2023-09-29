@@ -6,8 +6,6 @@
 
 # define WIN_SIZE_PROPORTION 0.9
 # define WIN_TITLE "Cub3D"
-# define WALL_HEIGHT 800
-# define RENDER_DISTANCE 400
 // @TODO use enum
 # define NORTH 0
 # define SOUTH 1
@@ -29,6 +27,10 @@
 # define SPEED 0.02
 # define RUNNING_SPEED_MODIFIER 10
 # define ROTATION_SPEED 0.2
+# define WALL_HEIGHT 800
+# define RENDER_DISTANCE 400
+// COLLISION_BOX_SIZE always < 1
+# define COLLISION_BOX_SIZE 0.2
 
 typedef struct s_img {
 	void	*addr;

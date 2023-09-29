@@ -76,23 +76,36 @@ void	compute_key_pressed(t_context *context)
 		context->map.player.rotate = ROTATION_SPEED / 10;
 }
 
+char	is_in_wall(t_context *context, float x, float y)
+{
+	return (is_wall_map(&context->map, floorf(x + COLLISION_BOX_SIZE),
+			floorf(y + COLLISION_BOX_SIZE))
+		|| is_wall_map(&context->map, floorf(x + COLLISION_BOX_SIZE),
+			floorf(y - COLLISION_BOX_SIZE))
+		|| is_wall_map(&context->map, floorf(x - COLLISION_BOX_SIZE),
+			floorf(y + COLLISION_BOX_SIZE))
+		|| is_wall_map(&context->map, floorf(x - COLLISION_BOX_SIZE),
+			floorf(y - COLLISION_BOX_SIZE))
+	);
+}
+
 void	compute_inputs(t_context *context)
 {
 	compute_key_pressed(context);
 	if (context->map.player.speed.x != 0)
 	{
 		if (!context->inputs_handler.active_collisions
-			|| !is_wall_map(&context->map,
-				floorf(context->map.player.pos.x + context->map.player.speed.x),
-				floorf(context->map.player.pos.y)))
+			|| !is_in_wall(context,
+				context->map.player.pos.x + context->map.player.speed.x,
+				context->map.player.pos.y))
 			context->map.player.pos.x += context->map.player.speed.x;
 		context->map.player.speed.x = 0;
 	}
 	if (context->map.player.speed.y != 0)
 	{
 		if (!context->inputs_handler.active_collisions
-			|| !is_wall_map(&context->map, floorf(context->map.player.pos.x),
-				floorf(context->map.player.pos.y + context->map.player.speed.y)))
+			|| !is_in_wall(context, context->map.player.pos.x,
+				context->map.player.pos.y + context->map.player.speed.y))
 			context->map.player.pos.y += context->map.player.speed.y;
 		context->map.player.speed.y = 0;
 	}
