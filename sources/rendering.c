@@ -78,7 +78,8 @@ void	draw_black_col(t_context *context, int col)
 void	draw_col(t_context *context, t_nearest_wall wall, t_ray ray, int col)
 {
 	int			row;
-	const int	line_height = 1 / wall.perceived_distance * WALL_HEIGHT;
+	const int	line_height = 1 / wall.perceived_distance
+		* (WALL_HEIGHT * WIN_SIZE_PROPORTION);
 	const int	line_start = (context->win_height - line_height) / 2;
 
 	if (!wall.perceived_distance)

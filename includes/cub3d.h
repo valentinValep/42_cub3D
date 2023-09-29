@@ -6,7 +6,7 @@
 
 # define WIN_SIZE_PROPORTION 0.9
 # define WIN_TITLE "Cub3D"
-# define WALL_HEIGHT 400
+# define WALL_HEIGHT 800
 # define RENDER_DISTANCE 400
 // @TODO use enum
 # define NORTH 0
