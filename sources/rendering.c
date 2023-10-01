@@ -1,4 +1,4 @@
-#include <math.h>
+#include <math.h>	//	move to cub3d.h
 #include "cub3d.h"
 
 #include <stdio.h>
@@ -116,6 +116,11 @@ void	raycaster(t_context *context, int col)
 		- context->map.player.plane.y / 2
 	};
 	nearest_wall = cast_ray(context, ray);
+//	if (!(col % ..))	//	Save data for minimap to avoid computing the data twice.
+//	{
+//		context->minimap[col % ..].ray = ray;
+//		context->minimap[col % ..].wall = nearest_wall;
+//	}
 	draw_col(context, nearest_wall, ray, col);
 }
 
