@@ -12,7 +12,7 @@ LIBRARIES_DIR := lib/
 
 INCLUDES := -I$(INCLUDES_DIR) -I$(LIBRARIES_DIR)minilibx -I$(LIBRARIES_DIR)libft
 
-LIBRARIES := -L$(LIBRARIES_DIR)minilibx -lmlx -L/usr/lib -lXext -lX11 -lm -lz -L$(LIBRARIES_DIR)libft -lft
+LIBRARIES := -L$(LIBRARIES_DIR)minilibx -lmlx -L/usr/lib -lXext -lX11 -lm -L$(LIBRARIES_DIR)libft -lft
 
 OBJ := main.o \
 	errors.o \
