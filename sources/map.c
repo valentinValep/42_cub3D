@@ -388,7 +388,7 @@ static int	init_map_grid(t_vector raw_grid, t_map *map)
 	i = 0;
 	while (i < map->height)
 	{
-		map->grid[i] = calloc(sizeof(char), map->width);
+		map->grid[i] = malloc(map->width * sizeof(char));
 		if (!map->grid[i])
 			return (destroy_init_map_grid(map->grid, i - 1),
 				basic_error("Map memory allocation error\n", 1));
