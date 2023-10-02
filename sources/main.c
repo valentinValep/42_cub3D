@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <X11/X.h>
-#include <math.h>
 #include <stdlib.h>
 #include "cub3d.h"
 
@@ -38,21 +37,6 @@ int	init_context(t_context *context, char **argv)
 	return (0);
 }
 
-void	rotate_player(t_context *context, float angle)
-{
-	const float	old_dir_x = context->map.player.dir.x;
-	const float	old_plane_x = context->map.player.plane.x;
-
-	context->map.player.dir.x = context->map.player.dir.x * cos(angle)
-		- context->map.player.dir.y * sin(angle);
-	context->map.player.dir.y = old_dir_x * sin(angle)
-		+ context->map.player.dir.y * cos(angle);
-	context->map.player.plane.x = context->map.player.plane.x * cos(angle)
-		- context->map.player.plane.y * sin(angle);
-	context->map.player.plane.y = old_plane_x * sin(angle)
-		+ context->map.player.plane.y * cos(angle);
-}
-
 void	compute_key_pressed(t_context *context)
 {
 	const float	speed = SPEED * (!(context->inputs_handler.inputs[KEY_SHIFT_L])
@@ -74,6 +58,12 @@ void	compute_key_pressed(t_context *context)
 		context->map.player.rotate = -ROTATION_SPEED / 10;
 	if (context->inputs_handler.inputs[KEY_RIGHT])
 		context->map.player.rotate = ROTATION_SPEED / 10;
+	if (context->inputs_handler.inputs[KEY_SHIFT_L])
+		change_player_fov(&context->map.player, 0.9);
+	else if (context->inputs_handler.inputs[KEY_CTRL_L])
+		change_player_fov(&context->map.player, 10);
+	else
+		change_player_fov(&context->map.player, 1);
 }
 
 char	is_in_wall(t_context *context, float x, float y)

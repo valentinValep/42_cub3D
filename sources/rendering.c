@@ -1,4 +1,3 @@
-#include <math.h>	//	move to cub3d.h
 #include "cub3d.h"
 
 #include <stdio.h>
@@ -108,10 +107,10 @@ void	raycaster(t_context *context, int col)
 	t_nearest_wall	nearest_wall;
 
 	ray.pos = context->map.player.pos;
-	ray.dir = (t_vec2){context->map.player.dir.x
+	ray.dir = (t_vec2){context->map.player.dir.x * context->map.player.fov
 		+ ((float)col / context->win_width * context->map.player.plane.x)
 		- context->map.player.plane.x / 2,
-		context->map.player.dir.y
+		context->map.player.dir.y * context->map.player.fov
 		+ ((float)col / context->win_width * context->map.player.plane.y)
 		- context->map.player.plane.y / 2
 	};

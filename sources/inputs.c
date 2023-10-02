@@ -9,7 +9,8 @@ int	destroy_hook(t_context *context)
 
 int	keydown_hook(int keycode, t_context *context)
 {
-	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left, XK_Right, XK_Shift_L};
+	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left,
+		XK_Right, XK_Shift_L, XK_Control_L};
 	int			i;
 
 	if (keycode == XK_Escape)
@@ -56,7 +57,8 @@ int	keydown_hook(int keycode, t_context *context)
 
 int	keyup_hook(int keycode, t_context *context)
 {
-	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left, XK_Right, XK_Shift_L};
+	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left,
+		XK_Right, XK_Shift_L, XK_Control_L};
 	int			i;
 
 	i = 0;
