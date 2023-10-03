@@ -42,3 +42,8 @@ void	change_player_fov(t_player *player, float fov)
 {
 	player->fov = tan((90 - fov / 2) * (M_PI / 180.0));
 }
+
+float	get_player_fov(t_player *player)
+{
+	return ((90 - (atan(player->fov) * (180.0 / M_PI))) * 2);
+}

@@ -37,6 +37,26 @@ int	init_context(t_context *context, char **argv)
 	return (0);
 }
 
+void	compute_fov(t_context *context)
+{
+	const float	actual_fov = get_player_fov(&context->map.player);
+
+	if (context->inputs_handler.inputs[KEY_CTRL_L])
+		return (change_player_fov(&context->map.player, ZOOM_FOV));
+	if (context->inputs_handler.inputs[KEY_SHIFT_L])
+	{
+		if (actual_fov < SPEED_FOV && actual_fov >= NORMAL_FOV)
+			change_player_fov(&context->map.player, actual_fov + TRANSITION_FOV);
+		else if (actual_fov < NORMAL_FOV)
+			change_player_fov(&context->map.player, NORMAL_FOV);
+		return ;
+	}
+	if (actual_fov > NORMAL_FOV)
+		change_player_fov(&context->map.player, actual_fov - TRANSITION_FOV);
+	else
+		change_player_fov(&context->map.player, NORMAL_FOV);
+}
+
 void	compute_key_pressed(t_context *context)
 {
 	const float	speed = SPEED * (!(context->inputs_handler.inputs[KEY_SHIFT_L])
@@ -58,12 +78,7 @@ void	compute_key_pressed(t_context *context)
 		context->map.player.rotate = -ROTATION_SPEED / 10;
 	if (context->inputs_handler.inputs[KEY_RIGHT])
 		context->map.player.rotate = ROTATION_SPEED / 10;
-	if (context->inputs_handler.inputs[KEY_SHIFT_L])
-		change_player_fov(&context->map.player, 100);
-	else if (context->inputs_handler.inputs[KEY_CTRL_L])
-		change_player_fov(&context->map.player, 10);
-	else
-		change_player_fov(&context->map.player, 90);
+	compute_fov(context);
 }
 
 char	is_in_wall(t_context *context, float x, float y)

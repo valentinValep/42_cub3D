@@ -5,7 +5,7 @@
 # include "mlx.h"
 # include "libft.h"
 
-# define WIN_SIZE_PROPORTION 0.9
+# define WIN_SIZE_PROPORTION 0.7
 # define WIN_TITLE "Cub3D"
 // @TODO use enum
 # define NORTH 0
@@ -27,12 +27,17 @@
 # define KEY_CTRL_L 7
 
 # define SPEED 0.02
-# define RUNNING_SPEED_MODIFIER 10
+# define RUNNING_SPEED_MODIFIER 2
 # define ROTATION_SPEED 0.2
 # define WALL_HEIGHT 800
 # define RENDER_DISTANCE 400
 // COLLISION_BOX_SIZE always < 1
 # define COLLISION_BOX_SIZE 0.2
+
+# define ZOOM_FOV 10
+# define NORMAL_FOV 90
+# define SPEED_FOV 110
+# define TRANSITION_FOV 1
 
 typedef struct s_img {
 	void	*addr;
@@ -130,5 +135,6 @@ void	render_minimap(t_context *context);
 void	init_player(t_map *map, char c, t_vec2 pos);
 void	rotate_player(t_context *context, float angle);
 void	change_player_fov(t_player *player, float fov);
+float	get_player_fov(t_player *player);
 
 #endif
