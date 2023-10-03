@@ -1,4 +1,5 @@
 #include "cub3d.h"
+#include <stdlib.h>
 
 #define MAP_SCALE 3
 
@@ -10,6 +11,14 @@ enum flood_dir
 	E_EAST,
 	E_SOUTH,
 	E_WEST
+};
+
+struct s_minimap
+{
+	char	**grid;
+	t_vec2	start;
+	t_vec2	center;
+	int		flood_counter[4];
 };
 
 
@@ -39,37 +48,47 @@ static void	draw_square(t_context *context, int x, int y)
 			set_img_pixel(&context->img, x + j, y + i, 0xFFFFFF);
 }
 
-static void	search_walls(t_context *context, char **grid, t_vec2 start, t_vec2 minimap_center)
+static void	search_walls(t_context *context, struct s_minimap minimap)
 {
-	static int		flood_counter[4];
-
-	if (grid[(int)start.x][(int)start.y] == '1')
+	if (minimap.grid[(int)minimap.start.y][(int)minimap.start.x] == '1')
 	{
-		dprintf(1, "Found wall\n");
-		dprintf(1, "minimap.x : %d\tminimap.y: %d\n", (int)minimap_center.x, (int)minimap_center.y);
-		dprintf(1, "start.x : %d\tstart.y: %d\n", (int)start.x, (int)start.y);
-		draw_square(context, ((int)minimap_center.x) - (((int)start.x - (int)context->map.player.pos.x) * 5), ((int)minimap_center.y) - (((int)start.y - (int)context->map.player.pos.y) * 5));
+//		dprintf(1, "Found wall\n");
+//		dprintf(1, "minimap.x : %d\tminimap.y: %d\n", (int)minimap_center.x, (int)minimap_center.y);
+//		dprintf(1, "start.x : %d\tstart.y: %d\n", (int)start.x, (int)start.y);
+		draw_square(context, ((int)minimap.center.x) + (((int)minimap.start.x - (int)context->map.player.pos.x) * 5), ((int)minimap.center.y) + (((int)minimap.start.y - (int)context->map.player.pos.y) * 5));	//	Magic number
 		return ;
 	}
-	if ((int)start.x - 1 >= 0 && flood_counter[E_WEST] < MAX_FLOOD)	//	!	\\	Need to save if square has already been checked for a wall.
+	if ((int)minimap.start.x - 1 >= 0 && minimap.flood_counter[E_WEST] < MAX_FLOOD && minimap.grid[(int)minimap.start.y][(int)minimap.start.x - 1] != 'F')
 	{
-		flood_counter[E_WEST]++;
-		search_walls(context, grid, (t_vec2){(int)start.x - 1, (int)start.y}, minimap_center);
+		if (minimap.grid[(int)minimap.start.y][(int)minimap.start.x - 1] != '1')
+			minimap.grid[(int)minimap.start.y][(int)minimap.start.x - 1] = 'F';
+		minimap.flood_counter[E_WEST]++;
+		minimap.start.x--;
+		search_walls(context, minimap);
 	}
-	if ((int)start.x + 1 < context->map.width && flood_counter[E_EAST] < MAX_FLOOD)	//	!	\\	Check here too and other directions too!
+	if ((int)minimap.start.x + 1 < context->map.width && minimap.flood_counter[E_EAST] < MAX_FLOOD && minimap.grid[(int)minimap.start.y][(int)minimap.start.x + 1] != 'F')
 	{
-		flood_counter[E_EAST]++;
-		search_walls(context, grid, (t_vec2){(int)start.x + 1, (int)start.y}, minimap_center);
+		if (minimap.grid[(int)minimap.start.y][(int)minimap.start.x + 1] != '1')
+			minimap.grid[(int)minimap.start.y][(int)minimap.start.x + 1] = 'F';
+		minimap.flood_counter[E_EAST]++;
+		minimap.start.x++;
+		search_walls(context, minimap);
 	}
-	if ((int)start.y - 1 >= 0 && flood_counter[E_NORD] < MAX_FLOOD)
+	if ((int)minimap.start.y - 1 >= 0 && minimap.flood_counter[E_NORD] < MAX_FLOOD && minimap.grid[(int)minimap.start.y - 1][(int)minimap.start.x] != 'F')
 	{
-		flood_counter[E_NORD]++;
-		search_walls(context, grid, (t_vec2){(int)start.x, (int)start.y - 1}, minimap_center);
+		if (minimap.grid[(int)minimap.start.y - 1][(int)minimap.start.x] != '1')
+			minimap.grid[(int)minimap.start.y - 1][(int)minimap.start.x] = 'F';
+		minimap.flood_counter[E_NORD]++;
+		minimap.start.y--;
+		search_walls(context, minimap);
 	}
-	if ((int)start.y + 1 < context->map.height && flood_counter[E_SOUTH] < MAX_FLOOD)
+	if ((int)minimap.start.y + 1 < context->map.height && minimap.flood_counter[E_SOUTH] < MAX_FLOOD && minimap.grid[(int)minimap.start.y + 1][(int)minimap.start.x] != 'F')
 	{
-		flood_counter[E_SOUTH]++;
-		search_walls(context, grid, (t_vec2){(int)start.x, (int)start.y + 1}, minimap_center);
+		if (minimap.grid[(int)minimap.start.y + 1][(int)minimap.start.x] != '1')
+			minimap.grid[(int)minimap.start.y + 1][(int)minimap.start.x] = 'F';
+		minimap.flood_counter[E_SOUTH]++;
+		minimap.start.y++;
+		search_walls(context, minimap);
 	}
 }
 
@@ -110,8 +129,33 @@ void	render_minimap(t_context *context)
 	//	Player position on map.
 		//context->map.grid[(int)(context->map.player.pos.x)][(int)(context->map.player.pos.y)]	//	use var for player position to shorten code.
 	//	Search surrounding walls for a max of n squares.	//	Set n depending on running or not
-		//char	**tmp_grid;					//	Need to find a better way!
-		//tmp_grid = context->map.grid;		//
+		char				**tmp_grid;					//	Need to find a better way!				//	Alloc once and for all when parsing initial map.
+		struct s_minimap	minimap;
 
-		search_walls(context, tmp_grid, (t_vec2){(context->map.player.pos.x), (context->map.player.pos.y)}, (t_vec2){(7 * (context->win_width / 8)), (5 * (context->win_height / 6))});
+		if (!(tmp_grid = (char **)malloc(sizeof(char *) * (context->map.height))))
+			return ;
+		for (int i = 0; i < context->map.height; i++)
+			if (!(tmp_grid[i] = (char *)malloc(sizeof(char) * (context->map.width))))
+			{
+				for (--i; i >= 0; i--)
+					free(tmp_grid[i]);
+				return ;
+			}
+
+		for (int i = 0; i < context->map.height; i++)
+			for (int j = 0; j < context->map.width; j++)
+				tmp_grid[i][j] = context->map.grid[i][j];		//	reset here every time
+
+		minimap.grid = tmp_grid;
+		minimap.start = (t_vec2){(context->map.player.pos.x), (context->map.player.pos.y)};
+		minimap.center = (t_vec2){(7 * (context->win_width / 8)), (5 * (context->win_height / 6))};
+		minimap.flood_counter[0] = 0;
+		minimap.flood_counter[1] = 0;
+		minimap.flood_counter[2] = 0;
+		minimap.flood_counter[3] = 0;
+
+		search_walls(context, minimap);
+		for (int i = 0; i < context->map.height; i++)
+			free(minimap.grid[i]);
+		free(minimap.grid);
 }
