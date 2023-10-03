@@ -66,8 +66,8 @@ void	compute_key_pressed(t_context *context)
 		!!context->inputs_handler.inputs[KEY_W] - context->inputs_handler.inputs[KEY_S]};
 	if (dir.x != 0 && dir.y != 0)
 	{
-		dir.x *= sqrt(2) / 2;
-		dir.y *= sqrt(2) / 2;
+		dir.x *= sqrtf(2) / 2;
+		dir.y *= sqrtf(2) / 2;
 	}
 	context->map.player.running = context->inputs_handler.inputs[KEY_SHIFT_L]
 		&& (dir.y > 0);

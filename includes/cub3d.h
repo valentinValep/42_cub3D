@@ -26,13 +26,13 @@
 # define KEY_SHIFT_L 6
 # define KEY_CTRL_L 7
 
-# define SPEED 0.02
+# define SPEED 0.02f
 # define RUNNING_MODIFIER 2
-# define ROTATION_SPEED 0.2
+# define ROTATION_SPEED 0.2f
 # define WALL_HEIGHT 800
 # define RENDER_DISTANCE 400
 // COLLISION_BOX_SIZE always < 1
-# define COLLISION_BOX_SIZE 0.2
+# define COLLISION_BOX_SIZE 0.2f
 
 # define ZOOM_FOV 10
 # define NORMAL_FOV 90

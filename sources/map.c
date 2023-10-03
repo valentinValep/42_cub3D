@@ -160,14 +160,14 @@ static int	init_parse_textures_initialisation(
 
 	*step = 0;
 	*line = get_next_line(fd);
-	if (!*line)
-		return (basic_error("Empty file\n", 1));
 	i = 0;
 	while (i < 4)
 	{
 		context->map.textures[i].addr = NULL;
 		i++;
 	}
+	if (!*line)
+		return (basic_error("Empty file\n", 1));
 	return (0);
 }
 
