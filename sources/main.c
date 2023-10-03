@@ -64,14 +64,14 @@ void	compute_key_pressed(t_context *context)
 
 	dir = (t_vec2){!!context->inputs_handler.inputs[KEY_A] - !!context->inputs_handler.inputs[KEY_D],
 		!!context->inputs_handler.inputs[KEY_W] - context->inputs_handler.inputs[KEY_S]};
-	context->map.player.running = context->inputs_handler.inputs[KEY_SHIFT_L]
-		&& (dir.x || dir.y);
-	speed = SPEED * (1 + (context->map.player.running * (RUNNING_MODIFIER -1)));
 	if (dir.x != 0 && dir.y != 0)
 	{
 		dir.x *= sqrt(2) / 2;
 		dir.y *= sqrt(2) / 2;
 	}
+	context->map.player.running = context->inputs_handler.inputs[KEY_SHIFT_L]
+		&& (dir.y > 0);
+	speed = SPEED * (1 + (context->map.player.running * (RUNNING_MODIFIER -1)));
 	context->map.player.speed.x = context->map.player.dir.x * dir.y * speed
 		+ context->map.player.dir.y * dir.x * speed;
 	context->map.player.speed.y = context->map.player.dir.y * dir.y * speed
