@@ -24,29 +24,29 @@ struct s_minimap
 
 #include <stdio.h>
 
-void	render_player(t_context *context)
-{
-	const int	x = context->map.player.pos.x * MAP_SCALE
-		+ context->win_width - context->map.width * MAP_SCALE;
-	const int	y = context->map.player.pos.y * MAP_SCALE;
+//void	render_player(t_context *context)
+//{
+//	const int	x = context->map.player.pos.x * MAP_SCALE
+//		+ context->win_width - context->map.width * MAP_SCALE;
+//	const int	y = context->map.player.pos.y * MAP_SCALE;
 
-	set_img_pixel(&context->img, x, y, 0x0000FF);
-	set_img_pixel(&context->img, x - 1, y - 1, 0x0000FF);
-	set_img_pixel(&context->img, x - 1, y, 0x0000FF);
-	set_img_pixel(&context->img, x - 1, y + 1, 0x0000FF);
-	set_img_pixel(&context->img, x, y - 1, 0x0000FF);
-	set_img_pixel(&context->img, x, y + 1, 0x0000FF);
-	set_img_pixel(&context->img, x + 1, y - 1, 0x0000FF);
-	set_img_pixel(&context->img, x + 1, y, 0x0000FF);
-	set_img_pixel(&context->img, x + 1, y + 1, 0x0000FF);
-}
+//	set_img_pixel(&context->img, x, y, 0x0000FF);
+//	set_img_pixel(&context->img, x - 1, y - 1, 0x0000FF);
+//	set_img_pixel(&context->img, x - 1, y, 0x0000FF);
+//	set_img_pixel(&context->img, x - 1, y + 1, 0x0000FF);
+//	set_img_pixel(&context->img, x, y - 1, 0x0000FF);
+//	set_img_pixel(&context->img, x, y + 1, 0x0000FF);
+//	set_img_pixel(&context->img, x + 1, y - 1, 0x0000FF);
+//	set_img_pixel(&context->img, x + 1, y, 0x0000FF);
+//	set_img_pixel(&context->img, x + 1, y + 1, 0x0000FF);
+//}
 
-static void	draw_square(t_context *context, int x, int y)
-{
-	for (int i = 0; i < 5/*running ? 3 : 5*/; i++)
-		for (int j = 0; j < 5; j++)
-			set_img_pixel(&context->img, x + j, y + i, 0xFFFFFF);
-}
+//static void	draw_square(t_context *context, int x, int y)
+//{
+//	for (int i = 0; i < 5/*running ? 3 : 5*/; i++)
+//		for (int j = 0; j < 5; j++)
+//			set_img_pixel(&context->img, x + j, y + i, 0xFFFFFF);
+//}
 
 static void	search_walls(t_context *context, struct s_minimap minimap)
 {

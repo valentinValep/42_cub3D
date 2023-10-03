@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <X11/X.h>
-#include <math.h>
 #include <stdlib.h>
 #include "cub3d.h"
 
@@ -38,34 +37,41 @@ int	init_context(t_context *context, char **argv)
 	return (0);
 }
 
-void	rotate_player(t_context *context, float angle)
+void	compute_fov(t_context *context)
 {
-	const float	old_dir_x = context->map.player.dir.x;
-	const float	old_plane_x = context->map.player.plane.x;
+	const float	actual_fov = get_player_fov(&context->map.player);
 
-	context->map.player.dir.x = context->map.player.dir.x * cos(angle)
-		- context->map.player.dir.y * sin(angle);
-	context->map.player.dir.y = old_dir_x * sin(angle)
-		+ context->map.player.dir.y * cos(angle);
-	context->map.player.plane.x = context->map.player.plane.x * cos(angle)
-		- context->map.player.plane.y * sin(angle);
-	context->map.player.plane.y = old_plane_x * sin(angle)
-		+ context->map.player.plane.y * cos(angle);
+	if (context->inputs_handler.inputs[KEY_CTRL_L])
+		return (change_player_fov(&context->map.player, ZOOM_FOV));
+	if (context->map.player.running)
+	{
+		if (actual_fov < SPEED_FOV && actual_fov >= NORMAL_FOV)
+			change_player_fov(&context->map.player, actual_fov + TRANSITION_FOV);
+		else if (actual_fov < NORMAL_FOV)
+			change_player_fov(&context->map.player, NORMAL_FOV);
+		return ;
+	}
+	if (actual_fov > NORMAL_FOV)
+		change_player_fov(&context->map.player, actual_fov - TRANSITION_FOV);
+	else
+		change_player_fov(&context->map.player, NORMAL_FOV);
 }
 
 void	compute_key_pressed(t_context *context)
 {
-	const float	speed = SPEED * (!(context->inputs_handler.inputs[KEY_SHIFT_L])
-			+ context->inputs_handler.inputs[KEY_SHIFT_L] * RUNNING_SPEED_MODIFIER);
-	t_vec2		dir;
+	float	speed;
+	t_vec2	dir;
 
 	dir = (t_vec2){!!context->inputs_handler.inputs[KEY_A] - !!context->inputs_handler.inputs[KEY_D],
 		!!context->inputs_handler.inputs[KEY_W] - context->inputs_handler.inputs[KEY_S]};
 	if (dir.x != 0 && dir.y != 0)
 	{
-		dir.x *= sqrt(2) / 2;
-		dir.y *= sqrt(2) / 2;
+		dir.x *= sqrtf(2) / 2;
+		dir.y *= sqrtf(2) / 2;
 	}
+	context->map.player.running = context->inputs_handler.inputs[KEY_SHIFT_L]
+		&& (dir.y > 0);
+	speed = SPEED * (1 + (context->map.player.running * (RUNNING_MODIFIER -1)));
 	context->map.player.speed.x = context->map.player.dir.x * dir.y * speed
 		+ context->map.player.dir.y * dir.x * speed;
 	context->map.player.speed.y = context->map.player.dir.y * dir.y * speed
@@ -74,6 +80,7 @@ void	compute_key_pressed(t_context *context)
 		context->map.player.rotate = -ROTATION_SPEED / 10;
 	if (context->inputs_handler.inputs[KEY_RIGHT])
 		context->map.player.rotate = ROTATION_SPEED / 10;
+	compute_fov(context);
 }
 
 char	is_in_wall(t_context *context, float x, float y)

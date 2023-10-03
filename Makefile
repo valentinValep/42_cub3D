@@ -21,6 +21,7 @@ OBJ := main.o \
 	rendering_minimap.o \
 	images.o \
 	inputs.o \
+	player.o \
 
 OBJ := $(addprefix $(BINARIES_DIR),$(OBJ))
 

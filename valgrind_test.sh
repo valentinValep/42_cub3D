@@ -1,10 +1,10 @@
 MAPS=./tests_maps/*
-VALGRIND=valgrind
+VALGRIND="valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes"
 
 function check_valgrind()
 {
 	echo $1
-	${VALGRIND} --leak-check=full --show-leak-kinds=all --track-origins=yes ./cub3D $1 2>&1 | grep -E "definitely lost|indirectly lost|possibly lost|still reachable|ERROR SUMMARY"
+	${VALGRIND} ./cub3D $1 2>&1 | grep -E "definitely lost|indirectly lost|possibly lost|still reachable|ERROR SUMMARY"
 	echo ""
 }
 
