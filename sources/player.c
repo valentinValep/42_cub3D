@@ -21,6 +21,7 @@ void	init_player(t_map *map, char c, t_vec2 pos)
 	map->player.plane = (t_vec2){-map->player.dir.y * 2, map->player.dir.x * 2};
 	map->has_player = 1;
 	map->player.fov = 1;
+	map->player.running = 0;
 }
 
 void	rotate_player(t_context *context, float angle)

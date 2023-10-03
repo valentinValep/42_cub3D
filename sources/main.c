@@ -43,7 +43,7 @@ void	compute_fov(t_context *context)
 
 	if (context->inputs_handler.inputs[KEY_CTRL_L])
 		return (change_player_fov(&context->map.player, ZOOM_FOV));
-	if (context->inputs_handler.inputs[KEY_SHIFT_L])
+	if (context->map.player.running)
 	{
 		if (actual_fov < SPEED_FOV && actual_fov >= NORMAL_FOV)
 			change_player_fov(&context->map.player, actual_fov + TRANSITION_FOV);
@@ -59,12 +59,14 @@ void	compute_fov(t_context *context)
 
 void	compute_key_pressed(t_context *context)
 {
-	const float	speed = SPEED * (!(context->inputs_handler.inputs[KEY_SHIFT_L])
-			+ context->inputs_handler.inputs[KEY_SHIFT_L] * RUNNING_SPEED_MODIFIER);
-	t_vec2		dir;
+	float	speed;
+	t_vec2	dir;
 
 	dir = (t_vec2){!!context->inputs_handler.inputs[KEY_A] - !!context->inputs_handler.inputs[KEY_D],
 		!!context->inputs_handler.inputs[KEY_W] - context->inputs_handler.inputs[KEY_S]};
+	context->map.player.running = context->inputs_handler.inputs[KEY_SHIFT_L]
+		&& (dir.x || dir.y);
+	speed = SPEED * (1 + (context->map.player.running * (RUNNING_MODIFIER -1)));
 	if (dir.x != 0 && dir.y != 0)
 	{
 		dir.x *= sqrt(2) / 2;

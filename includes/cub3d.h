@@ -27,7 +27,7 @@
 # define KEY_CTRL_L 7
 
 # define SPEED 0.02
-# define RUNNING_SPEED_MODIFIER 2
+# define RUNNING_MODIFIER 2
 # define ROTATION_SPEED 0.2
 # define WALL_HEIGHT 800
 # define RENDER_DISTANCE 400
@@ -61,6 +61,7 @@ typedef struct s_player {
 	t_vec2	plane;
 	float	rotate;
 	float	fov;
+	char	running;
 }	t_player;
 
 typedef struct s_ray {
