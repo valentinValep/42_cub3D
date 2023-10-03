@@ -59,11 +59,11 @@ void	compute_key_pressed(t_context *context)
 	if (context->inputs_handler.inputs[KEY_RIGHT])
 		context->map.player.rotate = ROTATION_SPEED / 10;
 	if (context->inputs_handler.inputs[KEY_SHIFT_L])
-		change_player_fov(&context->map.player, 0.9);
+		change_player_fov(&context->map.player, 100);
 	else if (context->inputs_handler.inputs[KEY_CTRL_L])
 		change_player_fov(&context->map.player, 10);
 	else
-		change_player_fov(&context->map.player, 1);
+		change_player_fov(&context->map.player, 90);
 }
 
 char	is_in_wall(t_context *context, float x, float y)

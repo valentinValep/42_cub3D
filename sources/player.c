@@ -1,3 +1,4 @@
+#include <math.h>
 #include "cub3d.h"
 
 static t_vec2	get_dir_from_char(char c)
@@ -19,6 +20,7 @@ void	init_player(t_map *map, char c, t_vec2 pos)
 	map->player.dir = get_dir_from_char(c);
 	map->player.plane = (t_vec2){-map->player.dir.y * 2, map->player.dir.x * 2};
 	map->has_player = 1;
+	map->player.fov = 1;
 }
 
 void	rotate_player(t_context *context, float angle)
@@ -38,5 +40,5 @@ void	rotate_player(t_context *context, float angle)
 
 void	change_player_fov(t_player *player, float fov)
 {
-	player->fov = fov;
+	player->fov = tan((90 - fov / 2) * (M_PI / 180.0));
 }
