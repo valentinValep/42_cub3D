@@ -3,7 +3,8 @@ NAME := cub3D
 CC := cc
 
 # @TODO rm -g3
-FLAGS := -Wall -Werror -Wextra -MMD -g3
+CFLAGS := -Wall -Werror -Wextra -MMD -g3
+FSANITIZE := -fsanitize=leak,address,undefined
 
 SOURCES_DIR := sources/
 BINARIES_DIR := build/
@@ -14,14 +15,18 @@ INCLUDES := -I$(INCLUDES_DIR) -I$(LIBRARIES_DIR)minilibx -I$(LIBRARIES_DIR)libft
 
 LIBRARIES := -L$(LIBRARIES_DIR)minilibx -lmlx -L/usr/lib -lXext -lX11 -lm -L$(LIBRARIES_DIR)libft -lft
 
-OBJ := main.o \
+OBJ := context.o \
 	errors.o \
-	map.o \
-	rendering.o \
-	rendering_minimap.o \
 	images.o \
+	inputs_computing.o \
 	inputs.o \
+	main.o \
+	map_parsing_init.o \
+	map_parsing_utils.o \
+	map.o \
 	player.o \
+	rendering_minimap.o \
+	rendering.o \
 
 OBJ := $(addprefix $(BINARIES_DIR),$(OBJ))
 
@@ -46,13 +51,14 @@ $(BINARIES_DIR):
 	mkdir $(BINARIES_DIR)
 
 $(BINARIES_DIR)%.o: $(SOURCES_DIR)%.c | $(BINARIES_DIR)
-	$(CC) $(FLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 all: $(NAME)
 
 clean:
 	$(RM) $(OBJ)
 	$(RM) $(DEPS)
+	$(RM) -r $(BINARIES_DIR)
 	make -C $(LIBRARIES_DIR)libft clean
 	make -C $(LIBRARIES_DIR)minilibx clean
 

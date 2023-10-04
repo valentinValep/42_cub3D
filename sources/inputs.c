@@ -10,7 +10,7 @@ int	destroy_hook(t_context *context)
 int	keydown_hook(int keycode, t_context *context)
 {
 	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left,
-		XK_Right, XK_Shift_L, XK_Control_L};
+		XK_Right, XK_Shift_L, XK_Control_L, XK_Control_R};
 	int			i;
 
 	if (keycode == XK_Escape)
@@ -28,37 +28,13 @@ int	keydown_hook(int keycode, t_context *context)
 	if (keycode == XK_k)
 		context->inputs_handler.active_collisions
 			= !context->inputs_handler.active_collisions;
-	//if (keycode == XK_w)
-	//{
-	//	context->map.player.speed.x = context->map.player.dir.x * SPEED;
-	//	context->map.player.speed.y = context->map.player.dir.y * SPEED;
-	//}
-	//if (keycode == XK_s)
-	//{
-	//	context->map.player.speed.x = -context->map.player.dir.x * SPEED;
-	//	context->map.player.speed.y = -context->map.player.dir.y * SPEED;
-	//}
-	//if (keycode == XK_a)
-	//{
-	//	context->map.player.speed.x = -context->map.player.plane.x * SPEED;
-	//	context->map.player.speed.y = -context->map.player.plane.y * SPEED;
-	//}
-	//if (keycode == XK_d)
-	//{
-	//	context->map.player.speed.x = context->map.player.plane.x * SPEED;
-	//	context->map.player.speed.y = context->map.player.plane.y * SPEED;
-	//}
-	//if (keycode == XK_Left)
-	//	context->map.player.rotate = -ROTATION_SPEED;
-	//if (keycode == XK_Right)
-	//	context->map.player.rotate = ROTATION_SPEED;
 	return (0);
 }
 
 int	keyup_hook(int keycode, t_context *context)
 {
 	const int	inputs[] = {XK_w, XK_s, XK_a, XK_d, XK_Left,
-		XK_Right, XK_Shift_L, XK_Control_L};
+		XK_Right, XK_Shift_L, XK_Control_L, XK_Control_R};
 	int			i;
 
 	i = 0;
