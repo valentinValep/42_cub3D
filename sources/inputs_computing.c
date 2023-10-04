@@ -4,7 +4,8 @@ void	compute_fov(t_context *context)
 {
 	const float	actual_fov = get_player_fov(&context->map.player);
 
-	if (context->inputs_handler.inputs[KEY_CTRL_L])
+	if (context->inputs_handler.inputs[KEY_CTRL_L]
+		|| context->inputs_handler.inputs[KEY_CTRL_R])
 		return (change_player_fov(&context->map.player, ZOOM_FOV));
 	if (context->map.player.running)
 	{

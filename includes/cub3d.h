@@ -16,7 +16,7 @@
 # define CEIL 4
 # define GROUND 5
 
-# define KEY_NUMBER 8
+# define KEY_NUMBER 9
 # define KEY_W 0
 # define KEY_S 1
 # define KEY_A 2
@@ -25,6 +25,7 @@
 # define KEY_RIGHT 5
 # define KEY_SHIFT_L 6
 # define KEY_CTRL_L 7
+# define KEY_CTRL_R 8
 
 # define SPEED 0.02f
 # define RUNNING_MODIFIER 2
