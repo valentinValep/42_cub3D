@@ -73,6 +73,7 @@ typedef struct s_player {
 typedef struct s_ray {
 	t_vec2	pos;
 	t_vec2	dir;
+	float	delta[2];
 }	t_ray;
 
 typedef struct s_nearest_wall {

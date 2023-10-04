@@ -1,41 +1,41 @@
 #include "cub3d.h"
-
 #include <stdio.h>
-// rename ? nearest_wall
+
+void	next_wall(t_ray ray, t_vec2 *side_dist, t_nearest_wall *res, int *wall)
+{
+	if (side_dist->x < side_dist->y)
+	{
+		wall[0] += (ray.dir.x > 0) * 2 - 1;
+		res->perceived_distance = side_dist->x;
+		res->side = EAST * (ray.dir.x < 0) + WEST * !(ray.dir.x < 0);
+		side_dist->x += ray.delta[0];
+	}
+	else
+	{
+		wall[1] += (ray.dir.y > 0) * 2 - 1;
+		res->perceived_distance = side_dist->y;
+		res->side = SOUTH * (ray.dir.y < 0) + NORTH * !(ray.dir.y < 0);
+		side_dist->y += ray.delta[1];
+	}
+}
+
 t_nearest_wall	cast_ray(t_context *context, t_ray ray)
 {
 	t_vec2			side_dist;
 	t_nearest_wall	res;
 	int				*wall;
-	const float		delta[2] = {
-		fabs(1 / ray.dir.x),
-		fabs(1 / ray.dir.y)
-	};
 	int				step;
 
 	step = 0;
 	wall = (int [2]){floorf(ray.pos.x), floorf(ray.pos.y)};
-	side_dist.x = fabs((ray.dir.x > 0) - (ray.pos.x - wall[0])) * delta[0];
-	side_dist.y = fabs((ray.dir.y > 0) - (ray.pos.y - wall[1])) * delta[1];
+	side_dist.x = fabs((ray.dir.x > 0) - (ray.pos.x - wall[0])) * ray.delta[0];
+	side_dist.y = fabs((ray.dir.y > 0) - (ray.pos.y - wall[1])) * ray.delta[1];
 	res.perceived_distance = 0;
 	res.side = 0;
 	while (!is_wall_map(&context->map, wall[0], wall[1])
 		&& step < RENDER_DISTANCE)
 	{
-		if (side_dist.x < side_dist.y)
-		{
-			wall[0] += (ray.dir.x > 0) * 2 - 1;
-			res.perceived_distance = side_dist.x;
-			res.side = EAST * (ray.dir.x < 0) + WEST * !(ray.dir.x < 0);
-			side_dist.x += delta[0];
-		}
-		else
-		{
-			wall[1] += (ray.dir.y > 0) * 2 - 1;
-			res.perceived_distance = side_dist.y;
-			res.side = SOUTH * (ray.dir.y < 0) + NORTH * !(ray.dir.y < 0);
-			side_dist.y += delta[1];
-		}
+		next_wall(ray, &side_dist, &res, wall);
 		step++;
 	}
 	if (step == RENDER_DISTANCE)
@@ -114,6 +114,8 @@ void	raycaster(t_context *context, int col)
 		+ ((float)col / context->win_width * context->map.player.plane.y)
 		- context->map.player.plane.y / 2
 	};
+	ray.delta[0] = fabs(1 / ray.dir.x);
+	ray.delta[1] = fabs(1 / ray.dir.y);
 	nearest_wall = cast_ray(context, ray);
 //	if (!(col % ..))	//	Save data for minimap to avoid computing the data twice.
 //	{

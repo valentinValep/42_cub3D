@@ -11,7 +11,7 @@ static int	get_face(char *line)
 	int			face;
 
 	i = 0;
-	while (line[i] && is_whitespace_no_newline(line[i])) // @TODO let ?
+	while (line[i] && is_whitespace_no_newline(line[i]))
 		i++;
 	if (!line[i] || !line[i + 1] || !line[i + 2]
 		|| ((line[i] != 'N' || line[i + 1] != 'O'
@@ -44,7 +44,8 @@ static int	init_texture(t_context *context, int face, char *path)
 		while (path[i] && is_whitespace_no_newline(path[i]))
 			i++;
 		if (path[i] && path[i] != '\n')
-			return (print_error("Invalid character after texture path\n"), EXIT_FAILURE);
+			return (print_error(
+					"Invalid character after texture path\n"), EXIT_FAILURE);
 	}
 	context->map.textures[face].addr = mlx_xpm_file_to_image(
 			context->mlx, path, &context->map.textures[face].width,

@@ -16,14 +16,44 @@ void	destroy_context(t_context *context)
 	}
 }
 
-int	init_context(t_context *context, char **argv)
+static void	first_init(t_context *context)
 {
-	int	screen_size[2];
-
 	context->mlx = NULL;
 	context->win = NULL;
 	context->img.addr = NULL;
 	context->map.ready = FALSE;
+}
+
+static int	create_window(t_context *context)
+{
+	int	screen_size[2];
+
+	mlx_get_screen_size(context->mlx, screen_size, screen_size + 1);
+	context->win_width = screen_size[0] * WIN_SIZE_PROPORTION;
+	context->win_height = screen_size[1] * WIN_SIZE_PROPORTION;
+	context->win = mlx_new_window(
+			context->mlx, context->win_width, context->win_height, WIN_TITLE);
+	return (!!context->win);
+}
+
+static void	init_inputs(t_context *context)
+{
+	int	i;
+
+	i = 0;
+	mlx_mouse_hide(context->mlx, context->win);
+	mlx_mouse_move(
+		context->mlx, context->win,
+		context->win_width / 2, context->win_height / 2);
+	while (i < KEY_NUMBER)
+		context->inputs_handler.inputs[i++] = 0;
+	context->inputs_handler.render_minimap = FALSE;
+	context->inputs_handler.active_collisions = FALSE;
+}
+
+int	init_context(t_context *context, char **argv)
+{
+	first_init(context);
 	context->mlx = mlx_init();
 	if (!context->mlx)
 		return (print_error("Failed to init mlx\n"), EXIT_FAILURE);
@@ -31,12 +61,7 @@ int	init_context(t_context *context, char **argv)
 		return (EXIT_FAILURE);
 	context->map.ready = TRUE;
 	mlx_do_key_autorepeatoff(context->mlx);
-	mlx_get_screen_size(context->mlx, screen_size, screen_size + 1);
-	context->win_width = screen_size[0] * WIN_SIZE_PROPORTION;
-	context->win_height = screen_size[1] * WIN_SIZE_PROPORTION;
-	context->win = mlx_new_window(
-			context->mlx, context->win_width, context->win_height, WIN_TITLE);
-	if (!context->win)
+	if (!create_window(context))
 		return (print_error("Failed to create window\n"), EXIT_FAILURE);
 	context->img.addr = mlx_new_image(
 			context->mlx, context->win_width, context->win_height);
@@ -47,11 +72,6 @@ int	init_context(t_context *context, char **argv)
 			&context->img.line_len, &context->img.endian);
 	context->img.width = context->win_width;
 	context->img.height = context->win_height;
-	mlx_mouse_hide(context->mlx, context->win);
-	mlx_mouse_move(context->mlx, context->win, context->win_width / 2, context->win_height / 2);
-	for (int i = 0; i < KEY_NUMBER; i++)
-		context->inputs_handler.inputs[i] = 0;
-	context->inputs_handler.render_minimap = FALSE;
-	context->inputs_handler.active_collisions = FALSE;
+	init_inputs(context);
 	return (0);
 }
