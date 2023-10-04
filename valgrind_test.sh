@@ -1,5 +1,5 @@
 MAPS=./tests_maps/*
-VALGRIND="valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes"
+VALGRIND="valgrind --leak-check=full --show-leak-kinds=all --suppressions=.mouse_hide.supp --track-origins=yes"
 
 function check_valgrind()
 {
