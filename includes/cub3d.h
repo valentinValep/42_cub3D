@@ -5,7 +5,7 @@
 # include "mlx.h"
 # include "libft.h"
 
-# define WIN_SIZE_PROPORTION 0.7
+# define WIN_SIZE_PROPORTION 0.9f
 # define WIN_TITLE "Cub3D"
 // @TODO use enum
 # define NORTH 0
