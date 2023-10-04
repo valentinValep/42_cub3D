@@ -92,11 +92,11 @@ typedef struct s_inputs_handler {
 	char	active_collisions;
 }	t_inputs_handler;
 
-typedef struct	s_minimap
+typedef struct	s_minimap_rays
 {
 	t_ray			ray;
 	t_nearest_wall	wall;
-}				t_minimap;
+}				t_minimap_rays;
 
 typedef struct s_context {
 	void				*mlx;
@@ -106,7 +106,7 @@ typedef struct s_context {
 	int					win_height;
 	t_map				map;
 	t_inputs_handler	inputs_handler;
-	t_minimap			minimap[3];	//	To store minimap data. Need to remove magic number!
+	t_minimap_rays		minimap[3];	//	To store minimap data. Need to remove magic number!
 }	t_context;
 
 // errors.c
