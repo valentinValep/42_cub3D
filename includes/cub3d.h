@@ -39,6 +39,11 @@
 # define SPEED_FOV 110
 # define TRANSITION_FOV 1
 
+# define FALSE 0
+# define TRUE 1
+
+typedef char	t_bool;
+
 typedef struct s_img {
 	void	*addr;
 	char	*pixels;
@@ -84,12 +89,13 @@ typedef struct s_map {
 	int			height;
 	int			has_player;
 	char		*texture_initialisation_steps;
+	t_bool		ready;
 }	t_map;
 
 typedef struct s_inputs_handler {
 	char	inputs[KEY_NUMBER];
-	char	render_minimap;
-	char	active_collisions;
+	t_bool	render_minimap;
+	t_bool	active_collisions;
 }	t_inputs_handler;
 
 typedef struct	s_minimap_rays
@@ -109,30 +115,37 @@ typedef struct s_context {
 	t_minimap_rays		minimap[3];	//	To store minimap data. Need to remove magic number!
 }	t_context;
 
-// errors.c
-int		basic_error(char *str, int ret);
+// context
+int		init_context(t_context *context, char **argv);
+void	destroy_context(t_context *context);
 
-// inputs.c
+// errors
+int		basic_error(char *str, int ret);
+void	print_error(char *str);
+
+// inputs
 int		destroy_hook(t_context *context);
 int		keydown_hook(int keycode, t_context *context);
 int		keyup_hook(int keycode, t_context *context);
 int		motion_hook(int x, int y, t_context *context);
+void	compute_inputs(t_context *context);
 
-// images.c
+// images
 void	set_img_pixel(t_img *img, int x, int y, int color);
 int		get_img_pixel(t_img *img, int x, int y);
 
-// map.cs
+// map
 int		init_map(t_context *context, char *path);
+void	destroy_map(t_map *map, void *mlx);
 char	get_map_char(t_map *map, int x, int y);
 int		is_wall_map(t_map *map, int x, int y);
 void	set_map_char(t_map *map, int x, int y, char c);
 
-// rendering[*].c
+// rendering
 void	render_main_scene(t_context *context);
 void	render_minimap(t_context *context);
 
-// player.c
+// player
 void	init_player(t_map *map, char c, t_vec2 pos);
 void	rotate_player(t_context *context, float angle);
 void	change_player_fov(t_player *player, float fov);
