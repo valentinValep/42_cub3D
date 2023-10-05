@@ -2,41 +2,36 @@
 
 #include <stdio.h>
 
-#define MAX_SEARCH	5
-#define MM_ZOOM		25
-
 static void	draw_square(t_context *context, int x, int y)
 {
-	if (context->inputs_handler.inputs[6] && context->map.player.running) // Shift_L
-		context->minimap.mm_zoom = 14;
+//	if (context->inputs_handler.inputs[KEY_SHIFT_L] && context->map.player.running)
+//		context->minimap.mm_zoom = MM_RUN_ZOOM;
 	for (int i = 0; i < context->minimap.mm_zoom * WIN_SIZE_PROPORTION; i++)
 		for (int j = 0; j < context->minimap.mm_zoom * WIN_SIZE_PROPORTION; j++)
 			if (i == 0 || j == 0)
-				set_img_pixel(&context->img, x + j, y + i, 0x0);	//	Use other color ?
+				set_img_pixel(&context->img, x + j, y + i, 0x0);
 			else
-				set_img_pixel(&context->img, x + j, y + i, 0xFFFFFF);	//	Use other color ?
+				set_img_pixel(&context->img, x + j, y + i, 0xFFFFFF);
 }
 
 static void	render_walls(t_context *context)
 {
-	if (context->inputs_handler.inputs[6] & context->map.player.running) // Shift_L
-	{
-		context->minimap.mm_zoom = 14;
-		context->minimap.max_search = 15;
-	}
+//	if (context->inputs_handler.inputs[KEY_SHIFT_L] & context->map.player.running)
+//	{
+//		context->minimap.max_search = MM_RUN_MAX_SEARCH;
+//		context->minimap.mm_zoom = MM_RUN_ZOOM;
+//	}
 	// search walls surrounding player
 	for (int i = -context->minimap.max_search; i <= context->minimap.max_search; i++)
 		for (int j = -context->minimap.max_search; j <= context->minimap.max_search; j++)
 			if (get_map_char(&(context->map), (int)context->map.player.pos.x + j, (int)context->map.player.pos.y + i) == '1')
-				draw_square(context, (7 * (context->win_width / 8)) + ((j + (int)context->map.player.pos.x - context->map.player.pos.x) * context->minimap.mm_zoom * WIN_SIZE_PROPORTION), context->win_height - ((context->win_width / 8)) + ((i + (int)context->map.player.pos.y - context->map.player.pos.y) * context->minimap.mm_zoom * WIN_SIZE_PROPORTION)); // Magic number
+				draw_square(context, context->minimap.center.x + ((j + (int)context->map.player.pos.x - context->map.player.pos.x) * context->minimap.mm_zoom * WIN_SIZE_PROPORTION), context->minimap.center.y + ((i + (int)context->map.player.pos.y - context->map.player.pos.y) * context->minimap.mm_zoom * WIN_SIZE_PROPORTION)); // Magic number
 }
 
 void	render_minimap(t_context *context)
 {
-	context->minimap.max_search = MAX_SEARCH;
-	context->minimap.mm_zoom = MM_ZOOM;
 	//	calc minimap center position on screen.	//	Save in variable!
-	set_img_pixel(&context->img, (7 * (context->win_width / 8))/* - MARGIN*/, context->win_height - ((context->win_width / 8))/* - MARGIN*/, 0XFFFFFF);	//	Test pixel
+	set_img_pixel(&context->img, context->minimap.center.x, context->minimap.center.y, 0XFFFFFF);	//	Test pixel
 	//	render walls
 		render_walls(context);
 	//	render rays

@@ -51,6 +51,14 @@ static void	init_inputs(t_context *context)
 	context->inputs_handler.active_collisions = FALSE;
 }
 
+static void		init_minimap(t_context *context)
+{
+	context->minimap.max_search = MM_MAX_SEARCH;
+	context->minimap.mm_zoom = MM_ZOOM;
+	context->minimap.center.x = (15 * (context->win_width / 16));
+	context->minimap.center.y = context->win_height - ((context->win_width / 16));
+}
+
 int	init_context(t_context *context, char **argv)
 {
 	first_init(context);
@@ -73,5 +81,6 @@ int	init_context(t_context *context, char **argv)
 	context->img.width = context->win_width;
 	context->img.height = context->win_height;
 	init_inputs(context);
+	init_minimap(context);
 	return (0);
 }
