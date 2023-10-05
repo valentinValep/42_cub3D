@@ -7,7 +7,7 @@
 
 static void	draw_square(t_context *context, int x, int y)
 {
-	if (context->inputs_handler.inputs[6]) // Shift_L
+	if (context->inputs_handler.inputs[6] && context->map.player.running) // Shift_L
 		context->minimap.mm_zoom = 14;
 	for (int i = 0; i < context->minimap.mm_zoom * WIN_SIZE_PROPORTION; i++)
 		for (int j = 0; j < context->minimap.mm_zoom * WIN_SIZE_PROPORTION; j++)
@@ -19,7 +19,7 @@ static void	draw_square(t_context *context, int x, int y)
 
 static void	render_walls(t_context *context)
 {
-	if (context->inputs_handler.inputs[6]) // Shift_L
+	if (context->inputs_handler.inputs[6] & context->map.player.running) // Shift_L
 	{
 		context->minimap.mm_zoom = 14;
 		context->minimap.max_search = 15;
