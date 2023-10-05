@@ -6,4 +6,4 @@ result
 result_maps.txt
 valgrind_result.txt
 funcheck
-textures/mc
+textures/mc/*.png

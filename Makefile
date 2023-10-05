@@ -34,7 +34,7 @@ DEPS := ${OBJ:.o=.d}
 
 RM := rm -f
 
-$(NAME): $(OBJ) $(LIBRARIES_DIR)libft/libft.a $(LIBRARIES_DIR)minilibx/libmlx.a
+$(NAME): $(LIBRARIES_DIR)libft/libft.a $(LIBRARIES_DIR)minilibx/libmlx.a $(OBJ)
 	$(CC) $(OBJ) $(LIBRARIES) -o $(NAME)
 
 bonus: $(NAME)
