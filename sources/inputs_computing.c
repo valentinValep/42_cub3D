@@ -22,6 +22,25 @@ void	compute_fov(t_context *context)
 		change_player_fov(&context->map.player, NORMAL_FOV);
 }
 
+static void	compute_minimap_zoom(t_context *context)
+{
+	if (context->map.player.running && context->minimap.max_search < MM_RUN_MAX_SEARCH && context->minimap.mm_zoom > MM_RUN_ZOOM)
+	{
+		context->minimap.max_search += TRANSITION_SEARCH;
+		context->minimap.mm_zoom += TRANSITION_ZOOM;
+	}
+	else if (!context->map.player.running && context->minimap.max_search > MM_MAX_SEARCH && context->minimap.mm_zoom < MM_ZOOM)
+	{
+		context->minimap.max_search -= TRANSITION_SEARCH;
+		context->minimap.mm_zoom -= TRANSITION_ZOOM;
+	}
+	else if (!context->map.player.running && context->minimap.max_search < MM_MAX_SEARCH && context->minimap.mm_zoom > MM_ZOOM)
+	{
+		context->minimap.max_search = MM_MAX_SEARCH;
+		context->minimap.mm_zoom = MM_ZOOM;
+	}
+}
+
 void	compute_key_pressed(t_context *context)
 {
 	float	speed;
@@ -48,6 +67,7 @@ void	compute_key_pressed(t_context *context)
 	if (context->inputs_handler.inputs[KEY_RIGHT])
 		context->map.player.rotate = ROTATION_SPEED / 10;
 	compute_fov(context);
+	compute_minimap_zoom(context);
 }
 
 static char	is_in_wall(t_context *context, float x, float y)

@@ -1,6 +1,8 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
+//#pragma GCC poison printf dprintf
+
 # include <math.h>
 # include "mlx.h"
 # include "libft.h"
@@ -39,6 +41,13 @@
 # define NORMAL_FOV 90
 # define SPEED_FOV 110
 # define TRANSITION_FOV 1
+
+# define MM_MAX_SEARCH		8
+# define MM_ZOOM			13
+# define MM_RUN_MAX_SEARCH	15
+# define MM_RUN_ZOOM		7
+# define TRANSITION_SEARCH	0.35f
+# define TRANSITION_ZOOM	-0.3f
 
 # define FALSE 0
 # define TRUE 1
@@ -104,8 +113,9 @@ typedef struct	s_minimap
 {
 //	t_ray			ray;
 //	t_nearest_wall	wall;
-	int				max_search;
-	int				mm_zoom;
+	t_vec2			center;
+	float			max_search;
+	float			mm_zoom;
 }				t_minimap;
 
 typedef struct s_context {
@@ -116,7 +126,7 @@ typedef struct s_context {
 	int					win_height;
 	t_map				map;
 	t_inputs_handler	inputs_handler;
-	t_minimap			minimap;	//	To store minimap data. Need to remove magic number!
+	t_minimap			minimap;
 }	t_context;
 
 // context
