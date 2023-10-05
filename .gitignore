@@ -7,3 +7,7 @@ result_maps.txt
 valgrind_result.txt
 funcheck
 textures/mc/*.png
+func_tree.htlm
+lib/bindings/
+lib/tom-select/
+lib/vis-9.1.2/

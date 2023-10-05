@@ -24,17 +24,20 @@ void	compute_fov(t_context *context)
 
 static void	compute_minimap_zoom(t_context *context)
 {
-	if (context->map.player.running && context->minimap.max_search < MM_RUN_MAX_SEARCH && context->minimap.mm_zoom > MM_RUN_ZOOM)
+	if (context->map.player.running && context->minimap.max_search
+		< MM_RUN_MAX_SEARCH && context->minimap.mm_zoom > MM_RUN_ZOOM)
 	{
 		context->minimap.max_search += TRANSITION_SEARCH;
 		context->minimap.mm_zoom += TRANSITION_ZOOM;
 	}
-	else if (!context->map.player.running && context->minimap.max_search > MM_MAX_SEARCH && context->minimap.mm_zoom < MM_ZOOM)
+	else if (!context->map.player.running && context->minimap.max_search
+		> MM_MAX_SEARCH && context->minimap.mm_zoom < MM_ZOOM)
 	{
 		context->minimap.max_search -= TRANSITION_SEARCH;
 		context->minimap.mm_zoom -= TRANSITION_ZOOM;
 	}
-	else if (!context->map.player.running && context->minimap.max_search < MM_MAX_SEARCH && context->minimap.mm_zoom > MM_ZOOM)
+	else if (!context->map.player.running && context->minimap.max_search
+		< MM_MAX_SEARCH && context->minimap.mm_zoom > MM_ZOOM)
 	{
 		context->minimap.max_search = MM_MAX_SEARCH;
 		context->minimap.mm_zoom = MM_ZOOM;

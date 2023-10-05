@@ -9,3 +9,13 @@ char	get_first_char(char *line)
 		i++;
 	return (line[i]);
 }
+
+int	pass_spaces(char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i] && is_whitespace_no_newline(line[i]))
+		i++;
+	return (i);
+}
