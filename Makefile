@@ -21,10 +21,14 @@ OBJ := context.o \
 	inputs_computing.o \
 	inputs.o \
 	main.o \
+	map_init.o \
+	map_parsing_color.o \
 	map_parsing_init.o \
+	map_parsing_texture.o \
 	map_parsing_utils.o \
 	map.o \
 	player.o \
+	rendering_draw.o \
 	rendering_minimap.o \
 	rendering.o \
 
