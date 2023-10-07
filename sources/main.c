@@ -40,5 +40,6 @@ int	main(int argc, char **argv)
 	mlx_loop_hook(context.mlx, loop_hook, &context);
 	mlx_loop(context.mlx);
 	mlx_do_key_autorepeaton(context.mlx);
+	mlx_mouse_show(context.mlx, context.win);
 	destroy_context(&context);
 }
