@@ -61,11 +61,17 @@ void	raycaster(t_context *context, int col)
 	ray.delta[0] = fabs(1 / ray.dir.x);
 	ray.delta[1] = fabs(1 / ray.dir.y);
 	nearest_wall = cast_ray(context, ray);
-//	if (!(col % ..))	//	Save data for minimap to avoid computing the data twice.
+//	if (col == 0)
 //	{
-//		context->minimap[col % ..].ray = ray;
-//		context->minimap[col % ..].wall = nearest_wall;
+//		context->minimap.rays[0].ray = ray;
+//		context->minimap.rays[0].wall = nearest_wall;	//	only take distance ?
 //	}
+	if (!(col % (context->win_width / MM_RAYS)))	//	Save data for minimap to avoid computing the data twice.
+	{
+		dprintf(1, "%d\n", col);
+		context->minimap.rays[(int)floor(col / (context->win_width / MM_RAYS))].ray = ray;
+		context->minimap.rays[(int)floor(col / (context->win_width / MM_RAYS))].wall = nearest_wall;	//	only take distance ?
+	}
 	draw_col(context, nearest_wall, ray, col);
 }
 

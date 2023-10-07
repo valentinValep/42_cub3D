@@ -58,6 +58,7 @@ static void	init_minimap(t_context *context)
 	context->minimap.center.x = (15 * (context->win_width / 16));
 	context->minimap.center.y
 		= context->win_height - ((context->win_width / 16));
+	context->minimap.ray_color = 0x00FFFFFF - context->map.ground_color; // ok ?
 }
 
 int	init_context(t_context *context, char **argv)

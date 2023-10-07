@@ -32,6 +32,8 @@ OBJ := context.o \
 	rendering_draw.o \
 	rendering_minimap.o \
 	rendering.o \
+	ft_draw_line_to_img.o \
+	ft_draw_line_to_img_2.o
 
 OBJ := $(addprefix $(BINARIES_DIR),$(OBJ))
 

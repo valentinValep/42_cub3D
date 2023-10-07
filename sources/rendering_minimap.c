@@ -1,6 +1,4 @@
-#include "cub3d.h"
-
-#include <stdio.h>
+#include "draw_line.h" // minimap.h
 
 static void	draw_square(t_context *context, int x, int y)
 {
@@ -21,13 +19,28 @@ static void	render_walls(t_context *context)
 				draw_square(context, context->minimap.center.x + ((j + (int)context->map.player.pos.x - context->map.player.pos.x) * context->minimap.mm_zoom * WIN_SIZE_PROPORTION), context->minimap.center.y + ((i + (int)context->map.player.pos.y - context->map.player.pos.y) * context->minimap.mm_zoom * WIN_SIZE_PROPORTION));
 }
 
+static void	render_rays(t_context *context)
+{
+	t_point 	start;
+	t_point		stop;
+	int const	color = context->minimap.ray_color;
+
+	start = (t_point){(int)context->minimap.center.x, (int)context->minimap.center.y};
+	for (int i = 0; i < MM_RAYS; i++)
+	{
+		//	draw minimap ray (with length depending on character speed / running)	//	need to import and adapt my line drawing function from fdf.
+		stop.x = start.x + (context->minimap.rays[i].ray.dir.x * context->minimap.rays[i].wall.perceived_distance * 10 * WIN_SIZE_PROPORTION);	//	Magic number ! Need to change with acceleration !
+		stop.y = start.y + (context->minimap.rays[i].ray.dir.y * context->minimap.rays[i].wall.perceived_distance * 10 * WIN_SIZE_PROPORTION);
+		ft_draw_line_to_img(context, &start, &stop, color);
+	}
+}
+
 void	render_minimap(t_context *context)
 {
 	//	calc minimap center position on screen.
 	set_img_pixel(&context->img, context->minimap.center.x, context->minimap.center.y, 0XFFFFFF);	//	Test pixel
 	//	render walls
-		render_walls(context);
+	render_walls(context);
 	//	render rays
-		//for (int i = 0; i < 3; i++)
-			//	draw minimap ray (with length depending on character speed / running)	//	need to import and adapt my line drawing function from fdf.
+	render_rays(context);
 }
