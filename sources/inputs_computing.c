@@ -29,18 +29,21 @@ static void	compute_minimap_zoom(t_context *context)
 	{
 		context->minimap.max_search += TRANSITION_SEARCH;
 		context->minimap.mm_zoom += TRANSITION_ZOOM;
+		context->minimap.ray_factor += TRANSITION_FACTOR;
 	}
 	else if (!context->map.player.running && context->minimap.max_search
 		> MM_MAX_SEARCH && context->minimap.mm_zoom < MM_ZOOM)
 	{
 		context->minimap.max_search -= TRANSITION_SEARCH;
 		context->minimap.mm_zoom -= TRANSITION_ZOOM;
+		context->minimap.ray_factor -= TRANSITION_FACTOR;
 	}
 	else if (!context->map.player.running && context->minimap.max_search
 		< MM_MAX_SEARCH && context->minimap.mm_zoom > MM_ZOOM)
 	{
 		context->minimap.max_search = MM_MAX_SEARCH;
 		context->minimap.mm_zoom = MM_ZOOM;
+		context->minimap.ray_factor = TRANSITION_FACTOR;
 	}
 }
 

@@ -48,7 +48,9 @@
 # define MM_RUN_ZOOM		7
 # define TRANSITION_SEARCH	0.35f
 # define TRANSITION_ZOOM	-0.3f
-# define MM_RAYS			10
+# define MM_RAY_FACTOR		13	//	default: 13
+# define MM_RUN_RAY_FACTOR	7	//	default: 7
+# define TRANSITION_FACTOR	-0.3f
 
 # define FALSE 0
 # define TRUE 1
@@ -118,11 +120,12 @@ typedef struct	s_mm_rays
 
 typedef struct	s_minimap
 {
-	t_vec2		center;	//	use t_point
+	t_vec2		center;
 	float		max_search;
 	float		mm_zoom;
-	t_mm_rays	rays[MM_RAYS];
+	t_mm_rays	*rays;
 	int			ray_color;
+	float		ray_factor;
 }				t_minimap;
 
 typedef struct s_context {

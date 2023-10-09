@@ -14,6 +14,8 @@ void	destroy_context(t_context *context)
 		mlx_destroy_display(context->mlx);
 		free(context->mlx);
 	}
+	if (context->minimap.rays)
+		free(context->minimap.rays);
 }
 
 static void	first_init(t_context *context)
@@ -58,7 +60,14 @@ static void	init_minimap(t_context *context)
 	context->minimap.center.x = (15 * (context->win_width / 16));
 	context->minimap.center.y
 		= context->win_height - ((context->win_width / 16));
-	context->minimap.ray_color = 0x00FFFFFF - context->map.ground_color; // ok ?
+	context->minimap.rays = (t_mm_rays *)malloc(sizeof(t_mm_rays) * context->win_width);
+	if (!(context->minimap.rays))
+	{
+		//	print Error + specific message + clean everything + return
+		return ;
+	}
+	context->minimap.ray_color = 0x00FFFFFF - context->map.ground_color;
+	context->minimap.ray_factor = MM_RAY_FACTOR;
 }
 
 int	init_context(t_context *context, char **argv)

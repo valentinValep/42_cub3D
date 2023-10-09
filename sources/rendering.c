@@ -66,11 +66,13 @@ void	raycaster(t_context *context, int col)
 //		context->minimap.rays[0].ray = ray;
 //		context->minimap.rays[0].wall = nearest_wall;	//	only take distance ?
 //	}
-	if (!(col % (context->win_width / MM_RAYS)))	//	Save data for minimap to avoid computing the data twice.
+	//if (!(col % (context->win_width / MM_RAYS)))	//	Save data for minimap to avoid computing the data twice.
 	{
-		dprintf(1, "%d\n", col);
-		context->minimap.rays[(int)floor(col / (context->win_width / MM_RAYS))].ray = ray;
-		context->minimap.rays[(int)floor(col / (context->win_width / MM_RAYS))].wall = nearest_wall;	//	only take distance ?
+		//dprintf(1, "%d\n", col);
+		//context->minimap.rays[(int)floor(col / (context->win_width / MM_RAYS))].ray = ray;
+		//context->minimap.rays[(int)floor(col / (context->win_width / MM_RAYS))].wall = nearest_wall;	//	only take distance ?
+		context->minimap.rays[col].ray = ray;
+		context->minimap.rays[col].wall = nearest_wall;	//	only take distance ?
 	}
 	draw_col(context, nearest_wall, ray, col);
 }
