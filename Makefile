@@ -6,7 +6,7 @@
 #    By: fguarrac <fguarrac@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/11 15:51:22 by fguarrac          #+#    #+#              #
-#    Updated: 2023/10/11 15:51:23 by fguarrac         ###   ########.fr        #
+#    Updated: 2023/10/11 16:03:03 by fguarrac         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,7 @@ NAME := cub3D
 
 CC := cc
 
-# @TODO rm -g3
-CFLAGS := -Wall -Werror -Wextra -MMD -g3
+CFLAGS := -Wall -Werror -Wextra -MMD
 FSANITIZE := -fsanitize=leak,address,undefined
 
 SOURCES_DIR := sources/
