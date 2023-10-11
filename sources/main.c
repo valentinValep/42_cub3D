@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fguarrac <fguarrac@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/11 15:52:41 by fguarrac          #+#    #+#             */
+/*   Updated: 2023/10/11 15:52:42 by fguarrac         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <X11/X.h>
 #include <stdlib.h>
@@ -39,7 +51,5 @@ int	main(int argc, char **argv)
 		motion_hook, &context);
 	mlx_loop_hook(context.mlx, loop_hook, &context);
 	mlx_loop(context.mlx);
-	mlx_do_key_autorepeaton(context.mlx);
-	mlx_mouse_show(context.mlx, context.win);
 	destroy_context(&context);
 }

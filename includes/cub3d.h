@@ -1,7 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fguarrac <fguarrac@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/11 15:54:57 by fguarrac          #+#    #+#             */
+/*   Updated: 2023/10/11 15:54:58 by fguarrac         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3D_H
 # define CUB3D_H
-
-//#pragma GCC poison printf dprintf
 
 # include <math.h>
 # include "mlx.h"
@@ -9,7 +19,6 @@
 
 # define WIN_SIZE_PROPORTION 0.9f
 # define WIN_TITLE "Cub3D"
-// @TODO use enum
 # define NORTH 0
 # define SOUTH 1
 # define EAST 2
@@ -48,8 +57,8 @@
 # define MM_RUN_ZOOM		7
 # define TRANSITION_SEARCH	0.35f
 # define TRANSITION_ZOOM	-0.3f
-# define MM_RAY_FACTOR		13	//	default: 13
-# define MM_RUN_RAY_FACTOR	7	//	default: 7
+# define MM_RAY_FACTOR		13
+# define MM_RUN_RAY_FACTOR	7
 # define TRANSITION_FACTOR	-0.3f
 
 # define FALSE 0
@@ -112,13 +121,13 @@ typedef struct s_inputs_handler {
 	t_bool	active_collisions;
 }	t_inputs_handler;
 
-typedef struct	s_mm_rays
+typedef struct s_mm_rays
 {
 	t_ray			ray;
 	t_nearest_wall	wall;
 }				t_mm_rays;
 
-typedef struct	s_minimap
+typedef struct s_minimap
 {
 	t_vec2		center;
 	float		max_search;

@@ -6,7 +6,7 @@
 /*   By: fguarrac <fguarrac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/31 02:17:56 by fguarrac          #+#    #+#             */
-/*   Updated: 2023/10/09 18:05:36 by fguarrac         ###   ########.fr       */
+/*   Updated: 2023/10/11 15:12:44 by fguarrac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,27 +17,12 @@ void	ft_positive_slope(
 {
 	int				x;
 	int				y;
-//	int				i;
-//	char			*tmp;
 
-//	tmp = fdf.img.img;
 	y = 0;
 	while (y < line.delta_y)
 	{
 		x = (int)((float)y / line.r);
 		set_img_pixel(&(context->img), start.x + x, start.y + y, color);
-//		i = 0;
-//		while (i < 4)
-//		{
-//			if ((tmp + ((start.y + y) * fdf.img.size_line)
-//					+ ((start.x + x) * 4) + i)
-//				>= fdf.img.img && (tmp + ((start.y + y) * fdf.img.size_line)
-//					+ ((start.x + x) * 4) + i) < fdf.img.img_end)
-//				*(tmp + ((start.y + y) * fdf.img.size_line)
-//						+ ((start.x + x) * 4) + i)
-//					= (char)((color >> (i * 8)) & 0x000000FF);
-//			i++;
-//		}
 		y++;
 	}
 }
@@ -47,27 +32,12 @@ void	ft_negative_slope(
 {
 	int				x;
 	int				y;
-//	int				i;
-//	char			*tmp;
 
-//	tmp = fdf.img.img;
 	y = 0;
 	while (y < line.delta_y)
 	{
 		x = (int)((float)y / line.r);
 		set_img_pixel(&(context->img), start.x - x, start.y - y, color);
-//		i = 0;
-//		while (i < 4)
-//		{
-//			if ((tmp + ((start.y - y) * fdf.img.size_line)
-//					+ ((start.x - x) * 4) + i)
-//				>= fdf.img.img && (tmp + ((start.y - y) * fdf.img.size_line)
-//					+ ((start.x - x) * 4) + i) < fdf.img.img_end)
-//				*(tmp + ((start.y - y) * fdf.img.size_line)
-//						+ ((start.x - x) * 4) + i)
-//					= (char)((color >> (i * 8)) & 0x000000FF);
-//			i++;
-//		}
 		y++;
 	}
 }

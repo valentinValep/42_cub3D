@@ -1,22 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   context.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fguarrac <fguarrac@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/11 15:50:59 by fguarrac          #+#    #+#             */
+/*   Updated: 2023/10/11 15:51:03 by fguarrac         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdlib.h>
 #include "cub3d.h"
-
-void	destroy_context(t_context *context)
-{
-	if (context->map.ready)
-		destroy_map(&context->map, context->mlx);
-	if (context->win)
-		mlx_destroy_window(context->mlx, context->win);
-	if (context->img.addr)
-		mlx_destroy_image(context->mlx, context->img.addr);
-	if (context->mlx)
-	{
-		mlx_destroy_display(context->mlx);
-		free(context->mlx);
-	}
-	if (context->minimap.rays)
-		free(context->minimap.rays);
-}
 
 static void	first_init(t_context *context)
 {
@@ -24,6 +19,7 @@ static void	first_init(t_context *context)
 	context->win = NULL;
 	context->img.addr = NULL;
 	context->map.ready = FALSE;
+	context->minimap.rays = NULL;
 }
 
 static int	create_window(t_context *context)
@@ -53,21 +49,20 @@ static void	init_inputs(t_context *context)
 	context->inputs_handler.active_collisions = FALSE;
 }
 
-static void	init_minimap(t_context *context)
+static int	init_minimap(t_context *context)
 {
 	context->minimap.max_search = MM_MAX_SEARCH;
 	context->minimap.mm_zoom = MM_ZOOM;
 	context->minimap.center.x = (15 * (context->win_width / 16));
 	context->minimap.center.y
 		= context->win_height - ((context->win_width / 16));
-	context->minimap.rays = (t_mm_rays *)malloc(sizeof(t_mm_rays) * context->win_width);
+	context->minimap.rays
+		= (t_mm_rays *)malloc(sizeof(t_mm_rays) * context->win_width);
 	if (!(context->minimap.rays))
-	{
-		//	print Error + specific message + clean everything + return
-		return ;
-	}
+		return (0);
 	context->minimap.ray_color = 0x00FFFFFF - context->map.ground_color;
 	context->minimap.ray_factor = MM_RAY_FACTOR;
+	return (1);
 }
 
 int	init_context(t_context *context, char **argv)
@@ -92,6 +87,7 @@ int	init_context(t_context *context, char **argv)
 	context->img.width = context->win_width;
 	context->img.height = context->win_height;
 	init_inputs(context);
-	init_minimap(context);
+	if (!init_minimap(context))
+		return (print_error("Failed to init minimap\n"), EXIT_FAILURE);
 	return (0);
 }

@@ -1,5 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rendering.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fguarrac <fguarrac@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/11 15:54:24 by fguarrac          #+#    #+#             */
+/*   Updated: 2023/10/11 15:54:26 by fguarrac         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
-#include <stdio.h>
 
 void	draw_col(t_context *context, t_nearest_wall wall, t_ray ray, int col);
 
@@ -61,18 +72,9 @@ void	raycaster(t_context *context, int col)
 	ray.delta[0] = fabs(1 / ray.dir.x);
 	ray.delta[1] = fabs(1 / ray.dir.y);
 	nearest_wall = cast_ray(context, ray);
-//	if (col == 0)
-//	{
-//		context->minimap.rays[0].ray = ray;
-//		context->minimap.rays[0].wall = nearest_wall;	//	only take distance ?
-//	}
-	//if (!(col % (context->win_width / MM_RAYS)))	//	Save data for minimap to avoid computing the data twice.
 	{
-		//dprintf(1, "%d\n", col);
-		//context->minimap.rays[(int)floor(col / (context->win_width / MM_RAYS))].ray = ray;
-		//context->minimap.rays[(int)floor(col / (context->win_width / MM_RAYS))].wall = nearest_wall;	//	only take distance ?
 		context->minimap.rays[col].ray = ray;
-		context->minimap.rays[col].wall = nearest_wall;	//	only take distance ?
+		context->minimap.rays[col].wall = nearest_wall;
 	}
 	draw_col(context, nearest_wall, ray, col);
 }

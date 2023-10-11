@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: fguarrac <fguarrac@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/10/11 15:51:22 by fguarrac          #+#    #+#              #
+#    Updated: 2023/10/11 15:51:23 by fguarrac         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME := cub3D
 
 CC := cc
@@ -16,6 +28,7 @@ INCLUDES := -I$(INCLUDES_DIR) -I$(LIBRARIES_DIR)minilibx -I$(LIBRARIES_DIR)libft
 LIBRARIES := -L$(LIBRARIES_DIR)minilibx -lmlx -L/usr/lib -lXext -lX11 -lm -L$(LIBRARIES_DIR)libft -lft
 
 OBJ := context.o \
+	context_utils.o \
 	errors.o \
 	images.o \
 	inputs_computing.o \
