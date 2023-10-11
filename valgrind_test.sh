@@ -4,7 +4,7 @@ VALGRIND="valgrind --leak-check=full --show-leak-kinds=all --suppressions=.mouse
 function check_valgrind()
 {
 	echo $1
-	${VALGRIND} ./cub3D $1 2>&1 | grep -E "definitely lost|indirectly lost|possibly lost|still reachable|ERROR SUMMARY"
+	${VALGRIND} ./cub3D $1 2>&1 | grep -E "definitely lost|indirectly lost|possibly lost|still reachable|ERROR SUMMARY|suppressed"
 	echo ""
 }
 
