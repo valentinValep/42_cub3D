@@ -4,6 +4,8 @@
 void	destroy_line_grid(void *line);
 void	destroy_init_map_grid(char **grid, int i);
 char	get_first_char(char *line);
+void	replace_nl_by_zero(t_vector *raw_grid);
+int		compute_map_width(t_vector raw_grid);
 
 static void	trim_raw_grid(t_vector *raw_grid)
 {
@@ -30,22 +32,6 @@ static void	trim_raw_grid(t_vector *raw_grid)
 		}
 		else
 			break ;
-	}
-}
-
-static void	replace_nl_by_zero(t_vector *raw_grid)
-{
-	char	*c;
-	int		i;
-
-	i = 0;
-	while (i < raw_grid->len)
-	{
-		c = &((char **)raw_grid->tab)[i][
-			ft_strlen(((char **)raw_grid->tab)[i]) - 1];
-		if (*c == '\n')
-			*c = 0;
-		i++;
 	}
 }
 
@@ -76,22 +62,6 @@ static int	transform_raw_line(char *dest, char *src, t_map *map, int y)
 	while (i < map->width)
 		dest[i++] = ' ';
 	return (0);
-}
-
-static int	compute_map_width(t_vector raw_grid)
-{
-	int		i;
-	size_t	max_width;
-
-	i = 0;
-	max_width = 0;
-	while (i < raw_grid.len)
-	{
-		if (ft_strlen(((char **)raw_grid.tab)[i]) > max_width)
-			max_width = ft_strlen(((char **)raw_grid.tab)[i]);
-		i++;
-	}
-	return (max_width);
 }
 
 static int	init_map_grid(t_vector raw_grid, t_map *map)

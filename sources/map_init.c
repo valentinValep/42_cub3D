@@ -5,6 +5,7 @@
 int		parse_textures_init(t_context *context, int fd);
 char	get_first_char(char *line);
 int		transform_raw_grid(t_vector raw_grid, t_map *map);
+void	destroy_textures(t_context *context);
 
 void	destroy_line_grid(void *line)
 {
@@ -19,19 +20,6 @@ void	destroy_init_map_grid(char **grid, int i)
 		i--;
 	}
 	free(grid);
-}
-
-static void	destroy_textures(t_context *context)
-{
-	int	i;
-
-	i = 0;
-	while (i < 4)
-	{
-		if (context->map.textures[i].addr)
-			mlx_destroy_image(context->mlx, context->map.textures[i].addr);
-		i++;
-	}
 }
 
 static t_vector	get_raw_grid(int fd)

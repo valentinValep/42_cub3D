@@ -22,8 +22,9 @@ OBJ := context.o \
 	inputs.o \
 	main.o \
 	map_init.o \
-	map_parsing_color.o \
 	map_init_raw_grid.o \
+	map_init_utils.o \
+	map_parsing_color.o \
 	map_parsing_init.o \
 	map_parsing_texture.o \
 	map_parsing_utils.o \
